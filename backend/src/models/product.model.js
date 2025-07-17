@@ -8,7 +8,6 @@ const productSchema = new Schema({
     Name:{
         type: String,
         required: true,
-        lowercase: true,
         trim: true
     },
     qty:{

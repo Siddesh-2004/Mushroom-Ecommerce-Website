@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { NavLink } from 'react-router-dom';
 const Navbar = () => {
   return (
     <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3">
@@ -18,9 +18,9 @@ const Navbar = () => {
       </div>
       <div className="flex flex-1 justify-end gap-8">
         <div className="flex items-center gap-9">
-          <a className="text-[#0d141c] text-sm font-medium leading-normal" href="#">Add Product</a>
-          <a className="text-[#0d141c] text-sm font-medium leading-normal" href="#">View Product</a>
-          <a className="text-[#0d141c] text-sm font-medium leading-normal" href="#">Orders</a>
+          <NavLink className={(e)=>{return e.isActive?"text-white text-sm font-medium leading-normal bg-blue-500 p-4 rounded":"text-[#0d141c] text-sm font-medium leading-normal"}} to="/addproduct">Add Product</NavLink>
+          <NavLink className={(e)=>{return e.isActive?"text-white text-sm font-medium leading-normal bg-blue-500 p-4 rounded":"text-[#0d141c] text-sm font-medium leading-normal"}} to="/vieworders">View Product</NavLink>
+          <NavLink className={(e)=>{return e.isActive?"text-white text-sm font-medium leading-normal bg-blue-500 p-4 rounded":"text-[#0d141c] text-sm font-medium leading-normal"}} to="/orders">Orders</NavLink>
         </div>
         <button
           className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#e7edf4] text-[#0d141c] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"

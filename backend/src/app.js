@@ -3,7 +3,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 
 const app = express();
-export default app;
+
 app.use(cors({
     origin:process.env.CORSORIGIN,
     credentials: true,
@@ -18,3 +18,11 @@ app.use(express.urlencoded({
 app.use(express.static("public"));
 
 app.use(cookieParser());
+
+export default app;
+
+
+// Import routes
+import adminRoutes from "./routes/admin.routes.js";
+// Use routes
+app.use("/api/v1/admin", adminRoutes);

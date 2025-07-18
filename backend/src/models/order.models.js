@@ -19,7 +19,22 @@ const orderSchema = new Schema({
     pincode:{
         type:Number,
         required:true
-    }},{
+    },
+    paymentMethod:{
+        type:String,
+        required:true,
+        enum:["cod","online"]
+    },
+    totalAmount:{
+        type:Number,
+        required:true
+    },
+    items:[{
+        type:Schema.Types.ObjectId,
+        ref:"Product",
+        required:true
+    }],
+},{
     timestamps:true     
 });
 const orderModel = mongoose.model("Order", orderSchema);

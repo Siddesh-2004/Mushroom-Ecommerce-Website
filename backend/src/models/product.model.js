@@ -1,14 +1,19 @@
 import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 const productSchema = new Schema({
-    Picture:{
+    picture:{
         type: String,
         required: true,     
     },
-    Name:{
+    pictureId:{
+        type: String,
+        required: true
+    },
+    name:{
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        unique: true
     },
     qty:{
         type: Number,

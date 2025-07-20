@@ -15,6 +15,10 @@ const productSchema = new Schema({
         trim: true,
         unique: true
     },
+    description:{
+        type: String,
+        trim: true
+    },
     qty:{
         type: Number,
         required: true,

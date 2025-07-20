@@ -10,7 +10,7 @@ const addProduct = asyncHandler(async (req, res) => {
     //if the product data is valid, create a new product
     //save the product to the database
     //return the product data in the response with success message
-    let { name, qty, price, discountPercentage } = req.body;
+    let { name, qty, price, description, discountPercentage } = req.body;
     qty = parseInt(qty, 10);
     price = parseFloat(price);  
     discountPercentage = parseFloat(discountPercentage);
@@ -50,6 +50,7 @@ const addProduct = asyncHandler(async (req, res) => {
         name: name.toLowerCase(),
         qty,
         price,
+        description,
         discountPercentage,
         picture: cloudinaryResponse.secure_url,
         pictureId: cloudinaryResponse.public_id
@@ -62,8 +63,9 @@ const addProduct = asyncHandler(async (req, res) => {
     res.status(201).json(new ApiResponse(createdProduct,'Product created successfully',201));
 
 
- 
-});
+
+
+}); 
 
 const deleteProduct = asyncHandler(async (req, res) => {
     const productId = req.params.id;
@@ -88,7 +90,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 const updateProduct = asyncHandler(async (req, res) => {
     const productId = req.params.id;
-    let { name, qty, price, discountPercentage } = req.body;
+    let { name, qty, price, discountPercentage, description } = req.body;
 
     if (!name || !qty || !price || !discountPercentage) {
         throw new ApiError(400, 'All fields are required');
@@ -124,6 +126,9 @@ const updateProduct = asyncHandler(async (req, res) => {
     if( productToUpdate.discountPercentage !== discountPercentage) {
         productToUpdate.discountPercentage = discountPercentage;
     }
+    if( productToUpdate.description !== description) {
+        productToUpdate.description = description;
+    }   
     if(!req.file) {
         //if no new picture is uploaded, keep the old picture
         productToUpdate.picture = productToUpdate.picture;

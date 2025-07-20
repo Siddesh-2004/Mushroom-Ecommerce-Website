@@ -1,39 +1,186 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+
 const Navbar = () => {
+  const [isNotificationActive, setIsNotificationActive] = useState(false);
+
   return (
-    <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf4] px-10 py-3">
-      <div className="flex items-center gap-4 text-[#0d141c]">
-        <div className="size-4">
-          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path
-              fillRule="evenodd"
-              clipRule="evenodd"
-              d="M12.0799 24L4 19.2479L9.95537 8.75216L18.04 13.4961L18.0446 4H29.9554L29.96 13.4961L38.0446 8.75216L44 19.2479L35.92 24L44 28.7521L38.0446 39.2479L29.96 34.5039L29.9554 44H18.0446L18.04 34.5039L9.95537 39.2479L4 28.7521L12.0799 24Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        <h2 className="text-[#0d141c] text-lg font-bold leading-tight tracking-[-0.015em]">InventoryPro</h2>
-      </div>
-      <div className="flex flex-1 justify-end gap-8">
-        <div className="flex items-center gap-9">
-          <NavLink className={(e)=>{return e.isActive?"text-white text-sm font-medium leading-normal bg-blue-500 p-4 rounded":"text-[#0d141c] text-sm font-medium leading-normal"}} to="/addproduct">Add Product</NavLink>
-          <NavLink className={(e)=>{return e.isActive?"text-white text-sm font-medium leading-normal bg-blue-500 p-4 rounded":"text-[#0d141c] text-sm font-medium leading-normal"}} to="/vieworders">View Product</NavLink>
-          <NavLink className={(e)=>{return e.isActive?"text-white text-sm font-medium leading-normal bg-blue-500 p-4 rounded":"text-[#0d141c] text-sm font-medium leading-normal"}} to="/orders">Orders</NavLink>
-        </div>
-        <button
-          className="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 bg-[#e7edf4] text-[#0d141c] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5"
-        >
-          <div className="text-[#0d141c]" data-icon="Bell" data-size="20px" data-weight="regular">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+    <header className="flex items-center justify-between whitespace-nowrap bg-gradient-to-r from-emerald-800 via-teal-700 to-green-800 px-10 py-4 backdrop-blur-md border-b border-white/20 shadow-lg relative">
+      {/* Logo Section */}
+      <div className="flex items-center gap-4 text-white group">
+        <div className="size-8 transform transition-all duration-300 hover:scale-110 hover:rotate-12">
+          <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center shadow-lg relative">
+            {/* Mushroom spots */}
+            <div className="absolute top-1 left-2 w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+            <div className="absolute top-2 right-1.5 w-1 h-1 bg-white/60 rounded-full"></div>
+            <div className="absolute bottom-2 left-1.5 w-1 h-1 bg-white/70 rounded-full"></div>
+            {/* Mushroom icon */}
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-white">
               <path
-                d="M221.8,175.94C216.25,166.38,208,139.33,208,104a80,80,0,1,0-160,0c0,35.34-8.26,62.38-13.81,71.94A16,16,0,0,0,48,200H88.81a40,40,0,0,0,78.38,0H208a16,16,0,0,0,13.8-24.06ZM128,216a24,24,0,0,1-22.62-16h45.24A24,24,0,0,1,128,216ZM48,184c7.7-13.24,16-43.92,16-80a64,64,0,1,1,128,0c0,36.05,8.28,66.73,16,80Z"
+                d="M12 2C8.5 2 6 4.5 6 8C6 8.5 6.1 9 6.2 9.5H17.8C17.9 9 18 8.5 18 8C18 4.5 15.5 2 12 2Z"
+                fill="currentColor"
+              />
+              <path
+                d="M10 10V20C10 21.1 10.9 22 12 22C13.1 22 14 21.1 14 20V10H10Z"
+                fill="currentColor"
               />
             </svg>
           </div>
+        </div>
+        <h2 className="text-white text-xl font-bold leading-tight tracking-[-0.015em] transition-all duration-300 group-hover:text-emerald-200">
+          🍄 Mushroom
+        </h2>
+      </div>
+
+      {/* Navigation and Actions */}
+      <div className="flex flex-1 justify-end gap-8 items-center">
+        {/* Navigation Links */}
+        <div className="flex items-center gap-2">
+          <NavLink
+            className={({ isActive }) =>
+              `px-6 py-3 rounded-xl text-sm font-medium leading-normal transition-all duration-300 transform hover:scale-105 ${
+                isActive
+                  ? "text-white bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/25 border border-green-400/30"
+                  : "text-white/80 hover:text-white hover:bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40"
+              }`
+            }
+            to="/addproduct"
+          >
+            <span className="flex items-center gap-2">
+              <span>➕</span>
+              Add Product
+            </span>
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) =>
+              `px-6 py-3 rounded-xl text-sm font-medium leading-normal transition-all duration-300 transform hover:scale-105 ${
+                isActive
+                  ? "text-white bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/25 border border-green-400/30"
+                  : "text-white/80 hover:text-white hover:bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40"
+              }`
+            }
+            to="/viewproducts"
+          >
+            <span className="flex items-center gap-2">
+              <span>👁️</span>
+              View Product
+            </span>
+          </NavLink>
+
+          <NavLink
+            className={({ isActive }) =>
+              `px-6 py-3 rounded-xl text-sm font-medium leading-normal transition-all duration-300 transform hover:scale-105 ${
+                isActive
+                  ? "text-white bg-gradient-to-r from-green-500 to-emerald-500 shadow-lg shadow-green-500/25 border border-green-400/30"
+                  : "text-white/80 hover:text-white hover:bg-white/10 backdrop-blur-sm border border-white/20 hover:border-white/40"
+              }`
+            }
+            to="/orders"
+          >
+            <span className="flex items-center gap-2">
+              <span>📦</span>
+              Orders
+            </span>
+          </NavLink>
+        </div>
+
+        {/* Logout Button */}
+        <button
+          className={`flex cursor-pointer items-center gap-2 justify-center overflow-hidden rounded-xl h-12 px-4 transition-all duration-300 transform hover:scale-110 hover:rotate-12 border border-white/30 backdrop-blur-sm relative ${
+            isNotificationActive
+              ? "bg-gradient-to-r from-orange-500 to-red-500 shadow-lg shadow-orange-500/25 text-white"
+              : "bg-white/10 hover:bg-white/20 text-white hover:text-emerald-200"
+          }`}
+          onMouseEnter={() => setIsNotificationActive(true)}
+          onMouseLeave={() => setIsNotificationActive(false)}
+          onClick={() => {
+            // Handle logout logic here
+            console.log("Logged out");
+          }}
+        >
+          <div className="text-current relative flex items-center gap-2">
+            {/* Logout icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20px"
+              height="20px"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M16 17v-2h-4v-2h4v-2l4 3-4 3zM2 21h10v-2H4V5h8V3H2v18z" />
+            </svg>
+            {/* Logout text */}
+            <span className="text-sm font-medium">Logout</span>
+          </div>
         </button>
       </div>
+
+      {/* Floating mushrooms decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+        <div
+          className="absolute text-2xl"
+          style={{
+            top: "10px",
+            left: "200px",
+            animation: "float 3s ease-in-out infinite",
+          }}
+        >
+          🍄
+        </div>
+        <div
+          className="absolute text-xl"
+          style={{
+            top: "15px",
+            right: "300px",
+            animation: "floatDelayed 4s ease-in-out infinite 1s",
+          }}
+        >
+          🍄
+        </div>
+        <div
+          className="absolute text-lg"
+          style={{
+            top: "8px",
+            right: "500px",
+            animation: "floatSlow 5s ease-in-out infinite 2s",
+          }}
+        >
+          🍄
+        </div>
+        <div
+          className="absolute text-xl"
+          style={{
+            top: "12px",
+            left: "600px",
+            animation: "float 3s ease-in-out infinite 0.5s",
+          }}
+        >
+          🍄
+        </div>
+      </div>
+
+      {/* CSS Animations */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+          }
+          
+          @keyframes floatDelayed {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(-3deg); }
+          }
+          
+          @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(2deg); }
+          }
+        `,
+        }}
+      />
     </header>
   );
 };

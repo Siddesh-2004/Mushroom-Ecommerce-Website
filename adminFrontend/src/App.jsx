@@ -1,38 +1,57 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import AdminLogin from './pages/login'
 import './App.css';
-import AdminProductAdd from './pages/addproduct';
-import AdminOrdersPage from './pages/orderspage';
 import Navbar from './components/navbar';
-import ViewOrdersPage from './pages/viewproduct';
-import { BrowserRouter as Router, Route, Routes, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import AdminProductAdd from './pages/addproduct';
+import MushroomAdminLogin from './pages/login';
+import OrdersPage from './pages/orderspage';
+import ViewProductsPage from './pages/viewproduct';
+
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 function App() {
-
-  const router=createBrowserRouter ([{
-    path: "/",
-    element:<><Navbar/><AdminProductAdd /></>
-  }, {
-    path: "/addproduct",
-    element: <><Navbar/><AdminProductAdd /></>
-  }, {
-    path: "/orders",
-    element: <><Navbar/><AdminOrdersPage /></>
-  }, {
-    path: "/vieworders",
-    element: <><Navbar/><ViewOrdersPage /></>
-  }]
-)
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <>
+          <Navbar />
+          <AdminProductAdd />
+        </>
+      ),
+    },
+    {
+      path: "/addproduct",
+      element: (
+        <>
+          <Navbar />
+          <AdminProductAdd />
+        </>
+      ),
+    },
+    {
+      path: "/orders",
+      element: (
+        <>
+          <Navbar />
+          <OrdersPage />
+        </>
+      ),
+    },
+    {
+      path: "/viewproducts",
+      element: (
+        <>
+          <Navbar />
+          <ViewProductsPage />
+        </>
+      ),
+    },
+  ]);
 
   return (
-    <div>
-      
-      <RouterProvider router={router} />
-    </div>
-  
-  )
+    
+    <RouterProvider router={router} />
+  );
 }
 
-export default App
+export default App;
+

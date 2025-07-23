@@ -29,11 +29,22 @@ const orderSchema = new Schema({
         type:Number,
         required:true
     },
-    items:[{
-        type:Schema.Types.ObjectId,
+    orderStatus:{
+        type:String,
+        required:true,
+        enum:["pending","processing","shipped","delivered","cancelled"],
+        default:"pending"
+    },
+    qty:{
+        type:Number,
+        required:true,
+        min: 1
+    },
+    productId:{
+        type:[Schema.Types.ObjectId],
         ref:"Product",
         required:true
-    }],
+    }
 },{
     timestamps:true     
 });

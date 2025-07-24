@@ -26,7 +26,9 @@ export default app;
 import adminRoutes from "./routes/admin.routes.js";
 import productRoutes from "./routes/product.routes.js"; 
 import locationRoutes from "./routes/locaton.routes.js";
+import orderRoutes from "./routes/order.routes.js";
 // Use routes
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/location", locationRoutes);
+app.use("/api/v1/order", orderRoutes);

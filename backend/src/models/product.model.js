@@ -19,10 +19,15 @@ const productSchema = new Schema({
         type: String,
         trim: true
     },
-    qty:{
+    availableQty:{
         type: Number,
         required: true,
         min: 0
+    },
+    deliveryTimeInDays:{
+        type: Number,
+        required: true,
+        min: 1
     },
     price:{
         type: Number,

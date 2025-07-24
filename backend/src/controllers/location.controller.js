@@ -2,6 +2,8 @@ import locationModel from "../models/location.model.js";
 import asyncHandler from "../utils/asynchandler.js";
 import ApiResponse from "../utils/apiResponse.js";
 import { ApiError } from "../utils/apiErrors.js";
+
+
 const addLocation = asyncHandler(async (req, res) => {
     const { pincode, city , deliveryCharge } = req.body;
 

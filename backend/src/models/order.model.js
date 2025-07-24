@@ -1,6 +1,6 @@
 import mongoose,{Schema} from "mongoose";
 const orderSchema = new Schema({
-    name:{
+    fullName:{
         type:String,
         required:true,
         lowercase:true,
@@ -25,15 +25,22 @@ const orderSchema = new Schema({
         required:true,
         enum:["cod","online"]
     },
-    totalAmount:{
-        type:Number,
-        required:true
+    orderStatus:{
+        type:String,
+        required:true,
+        enum:["not delivered","delivered"],
+        default:"not delivered"
     },
-    items:[{
+   orderQty:{
+        type:Number,
+        required:true,
+        min: 1
+    },
+    productId:{
         type:Schema.Types.ObjectId,
         ref:"Product",
         required:true
-    }],
+    }
 },{
     timestamps:true     
 });

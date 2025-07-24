@@ -10,17 +10,18 @@ const addProduct = asyncHandler(async (req, res) => {
     //if the product data is valid, create a new product
     //save the product to the database
     //return the product data in the response with success message
-    let { name, qty, price, description, discountPercentage } = req.body;
-    qty = parseInt(qty, 10);
+    let { name, availableQty, price, description, discountPercentage , deliveryTimeInDays} = req.body;
+    availableQty = parseInt(availableQty, 10);
     price = parseFloat(price);  
     discountPercentage = parseFloat(discountPercentage);
+    deliveryTimeInDays = parseInt(deliveryTimeInDays, 10);
 
-    if (!name || !qty || !price || !discountPercentage) {
+    if (!name || !availableQty || !price || !discountPercentage|| !deliveryTimeInDays) {
 
         throw new ApiError(400, 'All fields are required');
     }
-    if( typeof qty !== 'number' || qty < 0) {
-        console.log('Invalid quantity:', typeof qty);
+    if( typeof availableQty !== 'number' || availableQty < 0) {
+        console.log('Invalid quantity:', typeof availableQty);
         throw new ApiError(400, 'Quantity must be a non-negative number');
     }
     if( typeof price !== 'number' || price < 0) {
@@ -28,6 +29,9 @@ const addProduct = asyncHandler(async (req, res) => {
     }
     if( typeof discountPercentage !== 'number' || discountPercentage < 0 || discountPercentage > 100) {
         throw new ApiError(400, 'Discount percentage must be between 0 and 100');
+    }
+    if( typeof deliveryTimeInDays !== 'number' || deliveryTimeInDays < 1) {
+        throw new ApiError(400, 'Delivery time in days must be a positive integer');
     }
     const existingProduct = await productModel.findOne({ name });
     if (existingProduct) {
@@ -48,12 +52,13 @@ const addProduct = asyncHandler(async (req, res) => {
 
     const product=await productModel.create({
         name: name.toLowerCase(),
-        qty,
+        availableQty,
         price,
         description,
         discountPercentage,
         picture: cloudinaryResponse.secure_url,
-        pictureId: cloudinaryResponse.public_id
+        pictureId: cloudinaryResponse.public_id,
+        deliveryTimeInDays
     })
     console.log('Product created:', product);
     const createdProduct=await productModel.findById(product._id)
@@ -64,8 +69,7 @@ const addProduct = asyncHandler(async (req, res) => {
 
 
 
-
-}); 
+});
 
 const deleteProduct = asyncHandler(async (req, res) => {
     const productId = req.params.id;
@@ -90,16 +94,18 @@ const deleteProduct = asyncHandler(async (req, res) => {
 });
 const updateProduct = asyncHandler(async (req, res) => {
     const productId = req.params.id;
-    let { name, qty, price, discountPercentage, description } = req.body;
+    let { name, availableQty, price, discountPercentage, description, deliveryTimeInDays } = req.body;
 
-    if (!name || !qty || !price || !discountPercentage) {
+    if (!name || !availableQty || !price || !discountPercentage|| !productId|| !description|| !deliveryTimeInDays) {
         throw new ApiError(400, 'All fields are required');
     }
-    qty = parseInt(qty);
-    price = parseFloat(price)
-    discountPercentage = parseFloat(discountPercentage);
 
-    if( typeof qty !== 'number' || qty < 0) {
+    availableQty = parseInt(availableQty, 10);
+    price = parseFloat(price);
+    discountPercentage = parseFloat(discountPercentage);
+    deliveryTimeInDays = parseInt(deliveryTimeInDays, 10);
+
+    if( typeof availableQty !== 'number' || availableQty < 0) {
         throw new ApiError(400, 'Quantity must be a non-negative number');
     }
     if( typeof price !== 'number' || price < 0) {
@@ -107,6 +113,12 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
     if( typeof discountPercentage !== 'number' || discountPercentage < 0 || discountPercentage > 100) {
         throw new ApiError(400, 'Discount percentage must be between 0 and 100');
+    }
+    if( typeof deliveryTimeInDays !== 'number' || deliveryTimeInDays < 1) {
+        throw new ApiError(400, 'Delivery time in days must be a positive integer');
+    }
+    if (!productId) {
+        throw new ApiError(400, 'Product ID is required');
     }
     const productToUpdate = await productModel.findById(productId);
     if (!productToUpdate) {
@@ -117,8 +129,8 @@ const updateProduct = asyncHandler(async (req, res) => {
         //save the updated product name to the database
         
     }
-    if( productToUpdate.qty !== qty) {
-        productToUpdate.qty = qty;
+    if( productToUpdate.availableQty !== availableQty) {
+        productToUpdate.availableQty = availableQty;
     }
     if( productToUpdate.price !== price) {
         productToUpdate.price = price;
@@ -128,7 +140,10 @@ const updateProduct = asyncHandler(async (req, res) => {
     }
     if( productToUpdate.description !== description) {
         productToUpdate.description = description;
-    }   
+    } 
+    if( productToUpdate.deliveryTimeInDays !== deliveryTimeInDays) {
+        productToUpdate.deliveryTimeInDays = deliveryTimeInDays;
+    }  
     if(!req.file) {
         //if no new picture is uploaded, keep the old picture
         productToUpdate.picture = productToUpdate.picture;
@@ -163,12 +178,5 @@ const viewAllProduct = asyncHandler(async (req, res) => {
     console.log('Products retrieved:', products);
     res.status(200).json(new ApiResponse(products, 'Products retrieved successfully', 200));
 });
-
-
-
-
-
-
-
 
 export { addProduct, deleteProduct ,updateProduct, viewAllProduct };

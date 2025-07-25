@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Leaf, AlertCircle, CheckCircle } from "lucide-react";
 
-export default function MushroomAdminLogin() {
+export default function Login() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",

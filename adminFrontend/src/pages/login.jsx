@@ -1,248 +1,207 @@
-import React, { useState, useEffect } from "react";
-import { Eye, EyeOff, Leaf, AlertCircle, CheckCircle } from "lucide-react";
+import React, { useState } from 'react';
+import { User, Lock, LogIn } from 'lucide-react';
 
-export default function Login() {
+export default function LoginPage() {
   const [formData, setFormData] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: ''
   });
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
-  const [shake, setShake] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [focusedField, setFocusedField] = useState('');
 
-  // Mouse tracking for parallax effect
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      setMousePos({
-        x: (e.clientX / window.innerWidth) * 100,
-        y: (e.clientY / window.innerHeight) * 100,
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  const handleChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
     }));
-    if (message.text) {
-      setMessage({ type: "", text: "" });
+    
+    if (errors[name]) {
+      setErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
     }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.username.trim()) {
+      newErrors.username = 'Username is required';
+    }
+    
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    setMessage({ type: "", text: "" });
-
-    setTimeout(() => {
-      if (formData.username === "admin" && formData.password === "admin123") {
-        setMessage({
-          type: "success",
-          text: "Welcome to the Mushroom ! 🍄",
-        });
-
-        setTimeout(() => {
-          alert("Entering the admin realm...");
-        }, 2000);
-      } else {
-        setMessage({
-          type: "error",
-          text: "Invalid credentials. Try again.",
-        });
-        setShake(true);
-        setTimeout(() => setShake(false), 600);
-      }
-      setIsLoading(false);
-    }, 1500);
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    setIsSubmitting(false);
+    
+    // Handle successful login (redirect, etc.)
+    alert('Login successful!');
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900">
-      {/* Animated Background Elements */}
-      <div 
-        className="absolute inset-0 opacity-30"
-        style={{
-          background: `radial-gradient(circle at ${mousePos.x}% ${mousePos.y}%, rgba(34, 197, 94, 0.3) 0%, transparent 50%)`
-        }}
-      />
+    <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-4 lg:p-6">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 opacity-50"></div>
       
-      {/* Floating Mushroom Particles */}
-      <div className="absolute inset-0">
-        {[...Array(6)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-pulse"
-            style={{
-              left: `${15 + i * 15}%`,
-              top: `${20 + (i % 3) * 25}%`,
-              animationDelay: `${i * 0.8}s`,
-              animationDuration: '3s'
-            }}
-          >
-            <div className="text-4xl opacity-20 animate-bounce">🍄</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Mystical Glow Effect */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/10" />
-
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
-        <div
-          className={`relative group transition-all duration-500 transform ${
-            shake ? "animate-bounce" : "hover:scale-105"
-          }`}
-        >
-          {/* Glowing Background Card */}
-          <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-500 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-all duration-500 animate-pulse"></div>
+      {/* Login Card */}
+      <div className="relative z-10 w-full max-w-sm sm:max-w-md">
+        <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 hover:shadow-3xl">
           
-          {/* Main Card */}
-          <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-8 w-full max-w-md border border-white/20 hover:border-green-400/50 transition-all duration-500">
-            
-            {/* Mushroom Header */}
-            <div className="text-center mb-8 relative">
-              {/* Glowing Mushroom Icon */}
-              <div className="mx-auto w-20 h-20 bg-gradient-to-br from-red-500 via-orange-500 to-yellow-500 rounded-full flex items-center justify-center mb-6 shadow-2xl transform hover:rotate-12 transition-all duration-500 relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-red-400/50 to-transparent animate-pulse"></div>
-                <div className="text-4xl relative z-10 animate-bounce">🍄</div>
-              </div>
-              
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-300 via-emerald-200 to-teal-300 bg-clip-text text-transparent mb-3 animate-pulse">
-                Mushroom 
+          {/* Header with gradient */}
+          <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-8 sm:px-8 sm:py-10 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"></div>
+            <div className="relative z-10 text-center">
+              {/* <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-2xl backdrop-blur-sm border border-white/20 mb-4 sm:mb-6">
+                <span className="text-2xl sm:text-3xl">🍄</span>
+              </div> */}
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
+                Mushrooms
               </h1>
-              <p className="text-green-100/80 text-sm font-medium">
-                Enter the user credentials
+              <p className="text-slate-300 text-sm sm:text-base">
+                Admin Portal Login
               </p>
-              
-              {/* Decorative Elements */}
-              <div className="absolute -top-2 -left-4 text-green-300/30 animate-spin">
-                <Leaf className="w-6 h-6" />
-              </div>
-              <div className="absolute -top-2 -right-4 text-green-300/30 animate-spin" style={{ animationDirection: 'reverse' }}>
-                <Leaf className="w-6 h-6" />
-              </div>
             </div>
+          </div>
 
-            {/* ✅ ✅ ✅ Proper <form> wrapper starts here */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Form */}
+          <div className="p-6 sm:p-8 space-y-6">
+            <div className="space-y-6">
+              
               {/* Username Field */}
-              <div className="space-y-3 group">
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-semibold text-green-100 group-hover:text-green-200 transition-colors duration-300"
-                >
-                  🌱 USERNAME
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-800">
+                  Username
                 </label>
                 <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-gray-400" />
+                  </div>
                   <input
                     type="text"
-                    id="username"
                     name="username"
                     value={formData.username}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-6 py-4 rounded-2xl border-2 border-green-500/30 focus:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-500/20 transition-all duration-500 bg-white/10 backdrop-blur-sm placeholder-green-200/60 text-white font-medium hover:bg-white/15"
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('username')}
+                    onBlur={() => setFocusedField('')}
                     placeholder="Enter your username"
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all duration-300 font-medium ${
+                      errors.username 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
+                        : focusedField === 'username'
+                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   />
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
+                  {focusedField === 'username' && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
+                  )}
                 </div>
+                {errors.username && (
+                  <p className="text-red-500 text-sm font-medium animate-pulse">{errors.username}</p>
+                )}
               </div>
 
               {/* Password Field */}
-              <div className="space-y-3 group">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-semibold text-green-100 group-hover:text-green-200 transition-colors duration-300"
-                >
-                  🗝️ PASSWORD
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-800">
+                  Password
                 </label>
                 <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-gray-400" />
+                  </div>
                   <input
-                  
-                    type={showPassword ? "text" : "password"}
-                    id="password"
+                    type="password"
                     name="password"
                     value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-6 py-4 pr-14 rounded-2xl border-2 border-green-500/30 focus:border-green-400 focus:outline-none focus:ring-4 focus:ring-green-500/20 transition-all duration-500 bg-white/10 backdrop-blur-sm placeholder-green-200/60 text-white font-medium hover:bg-white/15"
+                    onChange={handleInputChange}
+                    onFocus={() => setFocusedField('password')}
+                    onBlur={() => setFocusedField('')}
                     placeholder="Enter your password"
+                    className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all duration-300 font-medium ${
+                      errors.password 
+                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
+                        : focusedField === 'password'
+                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
+                        : 'border-gray-300 hover:border-gray-400'
+                    }`}
                   />
-                  <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-green-300 hover:text-green-200 transition-all duration-300 hover:scale-110 p-1"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="w-6 h-6" />
-                    ) : (
-                      <Eye className="w-6 h-6" />
-                    )}
-                  </button>
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-green-400/10 to-emerald-400/10 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none"></div>
+                  {focusedField === 'password' && (
+                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
+                  )}
                 </div>
+                {errors.password && (
+                  <p className="text-red-500 text-sm font-medium animate-pulse">{errors.password}</p>
+                )}
               </div>
 
               {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full relative overflow-hidden bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-400 hover:via-emerald-400 hover:to-teal-400 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-500 transform hover:scale-105 hover:shadow-2xl disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none group"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500"></div>
-                <div className="relative flex items-center justify-center space-x-3">
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-6 w-6 border-3 border-white border-t-transparent"></div>
-                      <span className="text-lg">logging in...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-lg">🍄 login</span>
-                    </>
-                  )}
-                </div>
-              </button>
-
-              {/* Message Display */}
-              {message.text && (
-                <div
-                  className={`flex items-center space-x-3 p-4 rounded-2xl transition-all duration-500 transform ${
-                    message.type === "error"
-                      ? "bg-red-500/20 text-red-200 border border-red-500/30 backdrop-blur-sm"
-                      : "bg-green-500/20 text-green-200 border border-green-500/30 backdrop-blur-sm"
-                  } animate-bounce`}
+              <div className="pt-4">
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className={`w-full flex items-center justify-center gap-3 px-6 py-3 sm:py-4 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 shadow-xl hover:shadow-2xl text-base sm:text-lg ${
+                    isSubmitting
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black'
+                  }`}
                 >
-                  {message.type === "error" ? (
-                    <AlertCircle className="w-6 h-6 flex-shrink-0" />
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Signing In...</span>
+                    </>
                   ) : (
-                    <CheckCircle className="w-6 h-6 flex-shrink-0" />
+                    <>
+                      <LogIn className="w-5 h-5 sm:w-6 sm:h-6" />
+                      <span>Sign In</span>
+                    </>
                   )}
-                  <span className="font-medium">{message.text}</span>
-                </div>
-              )}
-            </form>
-
-            {/* Decorative Bottom Elements */}
-            <div className="mt-8 flex justify-center space-x-4 text-2xl opacity-30">
-              <div className="animate-bounce" style={{ animationDelay: '0s' }}>🌿</div>
-              <div className="animate-bounce" style={{ animationDelay: '0.2s' }}>🍄</div>
-              <div className="animate-bounce" style={{ animationDelay: '0.4s' }}>🌱</div>
-              <div className="animate-bounce" style={{ animationDelay: '0.6s' }}>🍄</div>
-              <div className="animate-bounce" style={{ animationDelay: '0.8s' }}>🌿</div>
+                </button>
+              </div>
             </div>
+
+            {/* Additional Links
+            <div className="pt-4 text-center border-t border-gray-100">
+              <p className="text-gray-600 text-sm">
+                Forgot your password?{' '}
+                <button className="text-slate-800 hover:text-slate-900 font-semibold hover:underline transition-colors">
+                  Reset here
+                </button>
+              </p>
+            </div> */}
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-6 sm:mt-8">
+          <p className="text-gray-500 text-sm">
+            © 2025 Mushrooms Admin Portal. All rights reserved.
+          </p>
         </div>
       </div>
     </div>

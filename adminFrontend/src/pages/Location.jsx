@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { Search, X ,DeleteIcon, Trash2} from 'lucide-react';
 
 export default function Location() {
   const [formData, setFormData] = useState({
@@ -204,7 +204,7 @@ export default function Location() {
         <div className='w-full h-4'></div>
 
         {/* Search Section */}
-        <div className="xl_custom:w-3/4 m-auto mb-4">
+        <div className="xl_custom:w-2/4 m-auto ">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-slate-400" />
@@ -237,9 +237,11 @@ export default function Location() {
             </div>
           )}
         </div>
+        <div className='w-full h-4 '>
 
+        </div>
         {/* Table Section */}
-        <div className="bg-white shadow-lg rounded-lg border border-slate-200 xl_custom:w-3/4 m-auto">
+        <div className="bg-white shadow-lg rounded-lg border border-slate-200 xl_custom:w-3/5 m-auto">
           <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-6 py-4 rounded-t-lg text-center">
             <h2 className="text-3xl font-semibold">Locations Available</h2>
             <p className="text-slate-300 text-sm mt-1">
@@ -280,8 +282,8 @@ export default function Location() {
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Pincode</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Name of the City</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Delivery Charge</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700">Actions</th>
+                    <th className=" py-4 text-left text-sm font-semibold text-slate-700">Delivery Charge</th>
+                    <th className=" text-left text-sm font-semibold text-slate-700   xl_custom:visible">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
@@ -293,15 +295,16 @@ export default function Location() {
                       <td className="px-6 py-4 text-sm text-slate-700">
                         {location.cityName}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-700">
+                      <td className=" py-4 text-sm text-slate-700">
                         ₹{location.deliveryCharge.toFixed(2)}
                       </td>
-                      <td className="px-6 py-4 text-sm">
+                      <td className=" py-4 text-sm">
                         <button
                           onClick={() => handleDelete(location.id)}
                           className="text-red-600 hover:text-red-800 font-medium hover:underline transition-colors"
                         >
-                          Delete
+                        <Trash2 className='text-shadow-slate-700'/>
+                          
                         </button>
                       </td>
                     </tr>

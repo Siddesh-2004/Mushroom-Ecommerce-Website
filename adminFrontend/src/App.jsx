@@ -3,8 +3,6 @@ import "./App.css";
 import Layout from "./Layout";
 import Home from "./pages/Home";
 import Location from "./pages/Location";
-import Contact from "./pages/Contact";
-import DeliveredOrders from "./pages/DeliveredOrders"
 import AddProduct from "./pages/AddProducts"
 import Orders from "./pages/Orders";
 import ViewProducts from "./pages/ViewProduct";
@@ -17,17 +15,10 @@ const router =createBrowserRouter(
       <Route path="orders" element={<Orders/>}/>
       <Route path="viewProducts" element={<ViewProducts/>}/>
       <Route path="locations" element={<Location/>}/>
-      <Route path="/deliveredOrders" element={<DeliveredOrders/>}/>
-      <Route path="/contact" element={<Contact/>}/>
-
-
     </Route>
   )
 )
-
-
-
-  return (
+return (
     <>
        <RouterProvider router={router}/>
     </>

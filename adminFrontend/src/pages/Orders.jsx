@@ -99,7 +99,7 @@ const Orders = () => {
       <div className="p-6">
         {/* Page Header */}
         <div className="text-center rounded-4xl bg-gradient-to-r from-slate-800 to-slate-900 p-4 shadow-lg mb-6"> 
-          <h1 className="text-5xl font-bold text-white">Your Orders !!</h1>
+          <h1 className="text-5xl font-bold text-white">Your Orders</h1>
           <p className="text-slate-300 text-sm">Track and manage customer orders</p>
         </div>
 

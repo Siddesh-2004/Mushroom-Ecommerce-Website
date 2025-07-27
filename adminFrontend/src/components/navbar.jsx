@@ -7,7 +7,9 @@ import {
   PlusCircleIcon,
   EyeIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  HomeModernIcon,
+  PlusIcon
 } from '@heroicons/react/24/outline';
 
 const NavBar = () => {
@@ -41,6 +43,16 @@ const NavBar = () => {
       path: '/viewProducts',
       icon: EyeIcon
     },
+    {
+      name:"Add Shop",
+      path:'/addShop',
+      icon:PlusIcon
+    },
+    {
+      name:"View Shops",
+      path:'/viewShops',
+      icon:HomeModernIcon
+    }
    
   ];
 

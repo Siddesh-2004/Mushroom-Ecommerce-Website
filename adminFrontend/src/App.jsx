@@ -5,7 +5,9 @@ import Home from "./pages/Home";
 import Location from "./pages/Location";
 import AddProduct from "./pages/AddProducts"
 import Orders from "./pages/Orders";
-import ViewProducts from "./pages/ViewProduct";
+import ViewProducts from "./pages/viewproduct";
+import AddShop from "./pages/AddShop";
+import ViewShops from "./pages/ViewShops";
 function App() {
 const router =createBrowserRouter(
   createRoutesFromElements(
@@ -15,6 +17,8 @@ const router =createBrowserRouter(
       <Route path="orders" element={<Orders/>}/>
       <Route path="viewProducts" element={<ViewProducts/>}/>
       <Route path="locations" element={<Location/>}/>
+      <Route path="addShop" element={<AddShop/>}/>
+      <Route path="viewShops" element={<ViewShops/>}/>
     </Route>
   )
 )

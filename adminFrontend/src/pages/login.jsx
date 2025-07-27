@@ -50,27 +50,16 @@ export default function Login() {
     if (!validateForm()) {
       return;
     }
-    const userName=formData.username;
-    const password=formData.password;
     
     setIsSubmitting(true);
-    const backendCall=async()=>{
-
-      const loginPayload={username:formData.username,password:formData.password}
-      try{
-        const response=await axios.post('/admin/login',loginPayload)
-        console.log(response)
-      }catch(err){
-        console.log("there was an error",err);
-      }
-
-    }
-
     
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
-    // setIsSubmitting(false);
+    setIsSubmitting(false);
     
- 
+    // Handle successful login (redirect, etc.)
+    alert('Login successful!');
   };
 
   return (
@@ -211,6 +200,7 @@ export default function Login() {
             </div> */}
           </div>
         </div>
+
 
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { User, Lock, LogIn } from 'lucide-react';
 
-export default function LoginPage() {
+export default function Login() {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -35,9 +35,7 @@ export default function LoginPage() {
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
+    } 
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -45,20 +43,21 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     
     if (!validateForm()) {
       return;
     }
+    const userName=formData.username;
+    const password=formData.password;
     
-    setIsSubmitting(true);
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // setIsSubmitting(true);
     
-    setIsSubmitting(false);
     
-    // Handle successful login (redirect, etc.)
-    alert('Login successful!');
+    // setIsSubmitting(false);
+    
+ 
   };
 
   return (
@@ -78,7 +77,7 @@ export default function LoginPage() {
                 <span className="text-2xl sm:text-3xl">🍄</span>
               </div> */}
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-                Mushrooms
+                Prakriti Mushrooms
               </h1>
               <p className="text-slate-300 text-sm sm:text-base">
                 Admin Portal Login
@@ -100,7 +99,9 @@ export default function LoginPage() {
                     <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
+                  autoFocus
                     type="text"
+                    autoComplete='off'
                     name="username"
                     value={formData.username}
                     onChange={handleInputChange}
@@ -198,11 +199,11 @@ export default function LoginPage() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-6 sm:mt-8">
+        {/* <div className="text-center mt-6 sm:mt-8">
           <p className="text-gray-500 text-sm">
             © 2025 Mushrooms Admin Portal. All rights reserved.
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

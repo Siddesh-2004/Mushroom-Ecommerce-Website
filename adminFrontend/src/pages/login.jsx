@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { User, Lock, LogIn } from 'lucide-react';
+import axios from "../api/axios.config.js"
 
-export default function LoginPage() {
+export default function Login() {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -43,6 +44,7 @@ export default function LoginPage() {
     return Object.keys(newErrors).length === 0;
   };
 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -51,14 +53,23 @@ export default function LoginPage() {
     }
     
     setIsSubmitting(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const backendCall=async()=>{
+
+      const loginPayload={username:formData.username,password:formData.password}
+      try{
+        const response=await axios.post('/admin/login',loginPayload)
+        console.log(response)
+      }catch(err){
+        console.log("there was an error",err);
+      }
+
+    }
+
     
     setIsSubmitting(false);
     
     // Handle successful login (redirect, etc.)
-    alert('Login successful!');
+   
   };
 
   return (
@@ -102,6 +113,7 @@ export default function LoginPage() {
                   <input
                     type="text"
                     name="username"
+                    autocomplete="false"
                     value={formData.username}
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('username')}
@@ -197,12 +209,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-6 sm:mt-8">
-          <p className="text-gray-500 text-sm">
-            © 2025 Mushrooms Admin Portal. All rights reserved.
-          </p>
-        </div>
+
       </div>
     </div>
   );

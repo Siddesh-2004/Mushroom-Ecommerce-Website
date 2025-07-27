@@ -1,5 +1,6 @@
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
 import "./App.css";
+import { useState } from "react";
 import Layout from "./Layout";
 import Home from "./pages/Home";
 import Location from "./pages/Location";
@@ -8,7 +9,9 @@ import Orders from "./pages/Orders";
 import ViewProducts from "./pages/viewproduct";
 import AddShop from "./pages/AddShop";
 import ViewShops from "./pages/ViewShops";
+import Login from "./pages/Login"
 function App() {
+const [isLoggedIn,setIsLoggedIn]=useState(false);
 const router =createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout/>}>
@@ -22,6 +25,8 @@ const router =createBrowserRouter(
     </Route>
   )
 )
+if(!isLoggedIn)
+  return(<Login/>);
 return (
     <>
        <RouterProvider router={router}/>

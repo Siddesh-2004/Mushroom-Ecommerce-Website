@@ -9,9 +9,10 @@ import Orders from "./pages/Orders";
 import ViewProducts from "./pages/viewproduct";
 import AddShop from "./pages/AddShop";
 import ViewShops from "./pages/ViewShops";
-import Login from "./pages/Login"
+import Login from "./pages/login";
+import { useState } from "react";
 function App() {
-const [isLoggedIn,setIsLoggedIn]=useState(false);
+  const [isLoggedIn,setIsLoggedIn]=useState(false);
 const router =createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout/>}>
@@ -26,7 +27,9 @@ const router =createBrowserRouter(
   )
 )
 if(!isLoggedIn)
-  return(<Login/>);
+  return(
+    <Login/>
+  )
 return (
     <>
        <RouterProvider router={router}/>

@@ -36,9 +36,7 @@ export default function Login() {
     
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
-    }
+    } 
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -47,10 +45,13 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     
     if (!validateForm()) {
       return;
     }
+    const userName=formData.username;
+    const password=formData.password;
     
     setIsSubmitting(true);
     const backendCall=async()=>{
@@ -66,10 +67,10 @@ export default function Login() {
     }
 
     
-    setIsSubmitting(false);
     
-    // Handle successful login (redirect, etc.)
-   
+    // setIsSubmitting(false);
+    
+ 
   };
 
   return (
@@ -89,7 +90,7 @@ export default function Login() {
                 <span className="text-2xl sm:text-3xl">🍄</span>
               </div> */}
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">
-                Mushrooms
+                Prakriti Mushrooms
               </h1>
               <p className="text-slate-300 text-sm sm:text-base">
                 Admin Portal Login
@@ -111,7 +112,9 @@ export default function Login() {
                     <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
+                  autoFocus
                     type="text"
+                    autoComplete='off'
                     name="username"
                     autocomplete="false"
                     value={formData.username}
@@ -208,7 +211,6 @@ export default function Login() {
             </div> */}
           </div>
         </div>
-
 
       </div>
     </div>

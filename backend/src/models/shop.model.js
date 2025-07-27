@@ -13,7 +13,7 @@ const shopSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        unique: true
+     
     },
     shopOwnerName:{
         type: String,

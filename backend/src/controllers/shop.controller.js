@@ -2,7 +2,8 @@ import shopModel from "../models/shop.model.js";
 import asyncHandler from "../utils/asynchandler.js"
 import ApiResponse from "../utils/apiResponse.js"
 import {ApiError} from "../utils/apiErrors.js"
-import {uploadOnCloudinary} from "../services/cloundinary.service.js";
+import {uploadOnCloudinary,deleteFromCloudinary} from "../services/cloundinary.service.js";
+import mongoose from "mongoose";
 const addShop=asyncHandler(async (req,res) => {
     if(!req.body){
         throw new ApiError(400,"Request is body is required")
@@ -49,4 +50,95 @@ const addShop=asyncHandler(async (req,res) => {
     }
     res.status(200).json(new ApiResponse(shop,"Shop created successfully",200));
 })
-export {addShop};
+
+const deleteShop=asyncHandler(async(req,res)=>{
+    let shopId=req.params.id;
+    shopId=new mongoose.Types.ObjectId(shopId);
+    if(!req.params.id){
+        throw new ApiError(400,"The shop id is required through params");
+    }
+    if(!shopId){
+        throw new ApiError(401,"Id is not provided");
+    }
+    
+    const shopToBeDeleted=await shopModel.findOne(shopId);
+    if(!shopToBeDeleted||shopToBeDeleted.length==0){
+        
+        throw new ApiError(402,"The shop details doesnt exist or this  shop has already been deleted")
+    }
+    console.log("shopToBeDeleted details:",shopToBeDeleted)
+    const cloudinaryResponse=await deleteFromCloudinary(shopToBeDeleted.shopPictureId);
+    console.log("publice id is ",shopToBeDeleted.shopPictureId);
+    console.log("cloudinary response while deleting is :",cloudinaryResponse);
+    if(cloudinaryResponse=='not found'||!cloudinaryResponse){
+        throw new ApiError(500,"Internal server error while deleting the photo from cloundinary");
+    }
+    const deletedShop=await shopModel.findOneAndDelete(shopId)
+    
+
+
+    res.status(200).json(new ApiResponse(deletedShop,"The shop details are deleted"))
+
+})
+
+
+
+
+const updateShop=asyncHandler(async(req,res)=>{
+    const shopId=req.params.id;
+    if(!req.params.id||!shopId){
+        throw new ApiError(400,"shopId is required");
+    }
+    const shopToBeUpdated=await shopModel.findById(shopId);
+    if(!shopToBeUpdated){
+        throw new ApiError(400,"this shop does not exists or it has been deleted");
+    }
+
+     const {shopName,shopOwnerName,shopAddress,shopAddressLink,shopPhoneNumber}=req.body;
+      if(!shopName||!shopAddress||!shopAddressLink||!shopOwnerName||!shopPhoneNumber){
+        throw new ApiError(400,"All fields are required");
+    }
+    shopToBeUpdated.shopName=shopName;
+    shopToBeUpdated.shopOwnerName=shopOwnerName;
+    shopToBeUpdated.shopAddress=shopAddress;
+    shopToBeUpdated.shopAddressLink=shopAddressLink;
+    shopToBeUpdated.shopPhoneNumber=shopPhoneNumber;
+
+    const shopPictureLocalPath=req.file?.path;
+    console.log(req.file.id);
+    if(!shopPictureLocalPath){
+        throw new ApiError(400,'shop picture is required');
+    }
+    let cloudinaryUploadResponse= await uploadOnCloudinary(shopPictureLocalPath);
+    console.log("cloudinary Upload Response :",cloudinaryUploadResponse);
+
+
+    if(!cloudinaryUploadResponse?.secure_url||!cloudinaryUploadResponse?.public_id){
+        throw new ApiError(500,"Internal server error during updating the picture");
+    }
+    shopToBeUpdated.shopPicture=cloudinaryUploadResponse.secure_url;
+
+    const cloudinaryDeleteResponse=await deleteFromCloudinary(shopToBeUpdated.shopPictureId);
+    console.log("cloudinaryDeleteResponse :" ,cloudinaryDeleteResponse)
+    if(cloudinaryDeleteResponse=='not found'||!cloudinaryDeleteResponse){
+        throw new ApiError(501,"Internal server error whle deleting the picture")
+    }
+
+
+    shopToBeUpdated.shopPictureId =cloudinaryUploadResponse.public_id
+    
+    const updatedShop=await shopToBeUpdated.save();
+    if(!updatedShop){
+        throw new ApiError(503,"Error in updating the product in database");
+    }
+    res.status(200).json(new ApiResponse(updatedShop,"Shop Details Updated successfully"));
+     
+})
+const viewAllShops=asyncHandler(async(req,res)=>{
+    const shops=await shopModel.find();
+    if(shops.length==0||!shops){
+        throw new ApiError(400,"They are no shops");
+    }
+    res.status(200).json(new ApiResponse(shops,"shops retrieved successfully",200));
+})
+export {addShop,deleteShop,updateShop,viewAllShops};

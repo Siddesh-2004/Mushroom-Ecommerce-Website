@@ -1,7 +1,33 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+import axios from '../api/axios.config.js'
+
 
 const Home = () => {
+  const [details,setDetails]=useState({});
+  
+  useEffect(()=>{
+    const getDetails=async()=>{
+      try{
+     const  response=await axios.get('/dashBoard/details');
+     setDetails(response.data.data)
+
+      }catch(err){
+        console.log(err.response.message);
+      }
+    }
+    getDetails();
+  },[]);
+
+
+
+
+
+
+
+
+
   const [selectedPeriod, setSelectedPeriod] = useState('MONTHLY');
 
   // Sample data for the sales graph
@@ -14,64 +40,31 @@ const Home = () => {
     { month: 'DEC', value: 380 }
   ];
 
-  // Stats data
+  
   const statsData = [
     {
+      title: 'Total Locations',
+      value: details.totalLocations
+    },
+    {
       title: 'Total Orders',
-      value: '₹126,500',
-      percentage: '34.7%',
-      isUp: true,
-      icon: '🛒'
+      value: details.totalOrders
+      
     },
     {
-      title: 'Active Orders',
-      value: '₹126,500',
-      percentage: '34.7%',
-      isUp: true,
-      icon: '📦'
+      title: 'Total Shops',
+      value: details.totalShops
+     
     },
     {
-      title: 'Completed Orders',
-      value: '₹126,500',
-      percentage: '34.7%',
-      isUp: true,
-      icon: '✅'
-    },
-    {
-      title: 'Return Orders',
-      value: '₹126,500',
-      percentage: '34.7%',
-      isUp: true,
-      icon: '↩️'
+      title: 'Total Products',
+      value: details.totalProducts
+      
     }
   ];
 
-  // Best sellers data
-  const bestSellers = [
-    {
-      id: 1,
-      name: 'Lorem Ipsum',
-      price: '₹126.50',
-      originalPrice: '₹126.500',
-      sales: '999 sales'
-    },
-    {
-      id: 2,
-      name: 'Lorem Ipsum',
-      price: '₹126.50',
-      originalPrice: '₹126.500',
-      sales: '999 sales'
-    },
-    {
-      id: 3,
-      name: 'Lorem Ipsum',
-      price: '₹126.50',
-      originalPrice: '₹126.500',
-      sales: '999 sales'
-    }
-  ];
 
-  const StatCard = ({ title, value, percentage, isUp, icon }) => (
+  const StatCard = ({ title, value}) => (
     <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-100 flex-1 ">
       <div className="flex items-center justify-center  mb-4 ">
         <h3 className="text-gray-600 text-sm font-medium text-center">{title}:</h3>
@@ -87,15 +80,7 @@ const Home = () => {
         <div className="text-2xl font-bold text-gray-900 ">{value}</div>
       </div>
       
-      {/* <div className="flex items-center">
-        <svg className={`w-4 h-4 mr-1 ${isUp ? 'text-green-500' : 'text-red-500'}`} fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d={isUp ? "M3.293 9.707a1 1 0 010-1.414l6-6a1 1 0 011.414 0l6 6a1 1 0 01-1.414 1.414L11 5.414V17a1 1 0 11-2 0V5.414L4.707 9.707a1 1 0 01-1.414 0z" : "M16.707 10.293a1 1 0 010 1.414l-6 6a1 1 0 01-1.414 0l-6-6a1 1 0 111.414-1.414L9 14.586V3a1 1 0 012 0v11.586l4.293-4.293a1 1 0 011.414 0z"}/>
-        </svg>
-        <span className={`text-sm font-medium mr-2 ${isUp ? 'text-green-500' : 'text-red-500'}`}>
-          {percentage}
-        </span>
-        <span className="text-xs text-gray-500">Compared to Oct 2023</span>
-      </div> */}
+     
     </div>
   );
 
@@ -103,40 +88,25 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50 p-6 ">
       <div className="max-w-7xl mx-auto lg:w-3/5 ">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-6 w-9/10 m-auto ">
           <div className="flex items-center justify-between flex-wrap gap-4 m-auto">
-            <div className="flex flex-col">
+            <div className="flex flex-col m-auto">
               <h1 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h1>
-              <div className="text-sm text-gray-500 flex items-center">
-                <span>Home</span>
-                <span className="mx-2"></span>
-                <span>Dashboard</span>
-              </div>
+              
             </div>
-            <div className="bg-white px-4 py-2 rounded-lg border border-gray-200 flex items-center">
-              <svg className="w-4 h-4 text-gray-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
-              </svg>
-              <span className="text-sm text-gray-700 whitespace-nowrap">Oct 11,2023 - Nov 11,2022</span>
+            <div className=" px-4 py-2 rounded-lg border border-gray-200 flex items-center m-auto bg-gradient-to-r from-slate-800 to-slate-900">
+             
+             <h3 className='text-white font-bold'>Welcome To Prakriti</h3>
             </div>
           </div>
         </div>
+        <div className="w-full h-2">
+               
+              </div>
 
         {/* Stats Cards - Flexbox Layout */}
         <div className="mb-8">
-          {/* Desktop: All 4 cards in one row */}
-          {/* <div className="flex gap-6 hidden">
-            {statsData.map((stat, index) => (
-              <StatCard
-                key={index}
-                title={stat.title}
-                value={stat.value}
-                percentage={stat.percentage}
-                isUp={stat.isUp}
-                icon={stat.icon}
-              />
-            ))}
-          </div> */}
+         
 
           {/* Tablet: 2 rows of 2 cards each */}
           <div className=" flex  flex-col gap-2 ">
@@ -146,9 +116,7 @@ const Home = () => {
                   key={index}
                   title={stat.title}
                   value={stat.value}
-                  percentage={stat.percentage}
-                  isUp={stat.isUp}
-                  icon={stat.icon}
+                 
                 />
               ))}
             </div>
@@ -166,19 +134,7 @@ const Home = () => {
             </div>
           </div>
 
-          {/* Mobile: Single column */}
-          {/* <div className=" flex-col gap-4">
-            {statsData.map((stat, index) => (
-              <StatCard
-                key={index}
-                title={stat.title}
-                value={stat.value}
-                percentage={stat.percentage}
-                isUp={stat.isUp}
-                icon={stat.icon}
-              />
-            ))}
-          </div> */}
+        
         </div>
         <div className='w-full h-4'>
 

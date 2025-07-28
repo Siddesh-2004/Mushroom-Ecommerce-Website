@@ -1,92 +1,109 @@
-import React, { useState } from 'react';
-import { User, Lock, LogIn } from 'lucide-react';
-import axios from "../api/axios.config.js"
-import toast from 'react-hot-toast';
+import React, { useState } from "react";
+import { User, Lock, LogIn } from "lucide-react";
+import axios from "../api/axios.config.js";
+import toast from "react-hot-toast";
+import { useEffect } from "react";
 
-export default function Login({setIsLoggedIn}) {
+export default function Login({ setIsLoggedIn }) {
+  useEffect(() => {
+    const verify = async () => {
+      try {
+        const response = await axios.post(
+          "admin/verify",
+          {},
+          {
+            withCredentials: true,
+          }
+        );
+        setIsLoggedIn(true);
+        toast.success("AutoLogin Successfull");
+      } catch (err) {
+        console.log(err)
+      }
+    };
+    verify();
+  }, []);
+
   const [formData, setFormData] = useState({
-    username: '',
-    password: ''
+    username: "",
+    password: "",
   });
-  
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [focusedField, setFocusedField] = useState('');
+  const [focusedField, setFocusedField] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = "Username is required";
     }
-    
+
     if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } 
-    
+      newErrors.password = "Password is required";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
     // const backendCall=async()=>{
 
-      const loginPayload={username:formData.username,password:formData.password}
-      try{
-        const response=await axios.post('/admin/login',loginPayload,{
-          withCredentials:true
-        })
-        console.log(response)
-        if(response.data.statusCode==200){
-          setIsLoggedIn(true);
-          toast.success("Login Completed")
-        }
-      }catch(err){
-        console.log("there was an error",err);
+    const loginPayload = {
+      username: formData.username,
+      password: formData.password,
+    };
+    try {
+      const response = await axios.post("/admin/login", loginPayload, {
+        withCredentials: true,
+      });
+      console.log(response);
+      if (response.data.statusCode == 200) {
+        setIsLoggedIn(true);
+        toast.success(response.data.message);
       }
+    } catch (err) {
+      toast.error(err.response.data.message);
+      console.log("there was an error", err);
+    }
 
-    
-
-    
     setIsSubmitting(false);
-    
+
     // Handle successful login (redirect, etc.)
-   
   };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center p-3 sm:p-4 lg:p-6">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100 opacity-50"></div>
-      
+
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-sm sm:max-w-md">
         <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden transform transition-all duration-300 hover:shadow-3xl">
-          
           {/* Header with gradient */}
           <div className="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-8 sm:px-8 sm:py-10 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-white/5 to-transparent"></div>
@@ -106,7 +123,6 @@ export default function Login({setIsLoggedIn}) {
           {/* Form */}
           <div className="p-6 sm:p-8 space-y-6">
             <div className="space-y-6">
-              
               {/* Username Field */}
               <div className="space-y-2">
                 <label className="block text-sm font-semibold text-gray-800">
@@ -117,30 +133,32 @@ export default function Login({setIsLoggedIn}) {
                     <User className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                  autoFocus
+                    autoFocus
                     type="text"
-                    autoComplete='off'
+                    autoComplete="off"
                     name="username"
                     // autocomplete="false"
                     value={formData.username}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField('username')}
-                    onBlur={() => setFocusedField('')}
+                    onFocus={() => setFocusedField("username")}
+                    onBlur={() => setFocusedField("")}
                     placeholder="Enter your username"
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all duration-300 font-medium ${
-                      errors.username 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                        : focusedField === 'username'
-                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                        : 'border-gray-300 hover:border-gray-400'
+                      errors.username
+                        ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : focusedField === "username"
+                        ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === 'username' && (
+                  {focusedField === "username" && (
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
                 {errors.username && (
-                  <p className="text-red-500 text-sm font-medium animate-pulse">{errors.username}</p>
+                  <p className="text-red-500 text-sm font-medium animate-pulse">
+                    {errors.username}
+                  </p>
                 )}
               </div>
 
@@ -158,23 +176,25 @@ export default function Login({setIsLoggedIn}) {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField('password')}
-                    onBlur={() => setFocusedField('')}
+                    onFocus={() => setFocusedField("password")}
+                    onBlur={() => setFocusedField("")}
                     placeholder="Enter your password"
                     className={`w-full pl-10 pr-4 py-3 border-2 rounded-xl focus:outline-none transition-all duration-300 font-medium ${
-                      errors.password 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                        : focusedField === 'password'
-                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                        : 'border-gray-300 hover:border-gray-400'
+                      errors.password
+                        ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : focusedField === "password"
+                        ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === 'password' && (
+                  {focusedField === "password" && (
                     <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
                 {errors.password && (
-                  <p className="text-red-500 text-sm font-medium animate-pulse">{errors.password}</p>
+                  <p className="text-red-500 text-sm font-medium animate-pulse">
+                    {errors.password}
+                  </p>
                 )}
               </div>
 
@@ -186,8 +206,8 @@ export default function Login({setIsLoggedIn}) {
                   disabled={isSubmitting}
                   className={`w-full flex items-center justify-center gap-3 px-6 py-3 sm:py-4 rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 shadow-xl hover:shadow-2xl text-base sm:text-lg ${
                     isSubmitting
-                      ? 'bg-gray-400 cursor-not-allowed'
-                      : 'bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black'
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black"
                   }`}
                 >
                   {isSubmitting ? (
@@ -216,8 +236,6 @@ export default function Login({setIsLoggedIn}) {
             </div> */}
           </div>
         </div>
-
-
       </div>
     </div>
   );

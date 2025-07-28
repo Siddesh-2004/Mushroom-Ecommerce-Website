@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   HomeIcon,
   ShoppingBagIcon,
@@ -10,65 +11,70 @@ import {
   XMarkIcon,
   HomeModernIcon,
   PlusIcon,
-  ArrowLeftEndOnRectangleIcon,
-  ArrowPathRoundedSquareIcon
-} from '@heroicons/react/24/outline';
-import { ArrowBigLeftDashIcon, DoorClosed, DoorClosedLockedIcon, DoorOpenIcon, LucideDoorOpen } from 'lucide-react';
-
-const NavBar = ({setIsLoggedIn}) => {
+} from "@heroicons/react/24/outline";
+import { LucideDoorOpen } from "lucide-react";
+import axios from "../api/axios.config.js";
+const NavBar = ({ setIsLoggedIn }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   // Navigation items configuration
   const navigationItems = [
     {
-      name: 'Home',
-      path: '/',
-      icon: HomeIcon
+      name: "Home",
+      path: "/",
+      icon: HomeIcon,
     },
     {
-      name: 'Orders',
-      path: '/orders',
-      icon: ShoppingBagIcon
+      name: "Orders",
+      path: "/orders",
+      icon: ShoppingBagIcon,
     },
     {
-      name: 'Locations',
-      path: '/Locations',
-      icon: MapPinIcon
+      name: "Locations",
+      path: "/Locations",
+      icon: MapPinIcon,
     },
     {
-      name: 'Add Products',
-      path: '/addProduct',
-      icon: PlusCircleIcon
+      name: "Add Products",
+      path: "/addProduct",
+      icon: PlusCircleIcon,
     },
     {
-      name: 'View Products',
-      path: '/viewProducts',
-      icon: EyeIcon
+      name: "View Products",
+      path: "/viewProducts",
+      icon: EyeIcon,
     },
     {
-      name:"Add Shop",
-      path:'/addShop',
-      icon:PlusIcon
+      name: "Add Shop",
+      path: "/addShop",
+      icon: PlusIcon,
     },
     {
-      name:"View Shops",
-      path:'/viewShops',
-      icon:HomeModernIcon
+      name: "View Shops",
+      path: "/viewShops",
+      icon: HomeModernIcon,
     },
-    
-   
   ];
-  const handleLogout=()=>{
-    setIsLoggedIn(false);
-  }
+  const handleLogout = async () => {
+    try {
+      const response = await axios.post("/admin/logout", {},{
+          withCredentials:true
+        }
+      )
+      setIsLoggedIn(false);
+      toast.success(response.data.message);
+    } catch (err) {
+      toast.error(err.response.data.message);
+    }
+  };
 
   // Handle screen size changes
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 1024;
       setIsMobile(mobile);
-      
+
       // Auto-open drawer on large screens
       if (!mobile) {
         setIsDrawerOpen(true);
@@ -79,12 +85,12 @@ const NavBar = ({setIsLoggedIn}) => {
 
     // Initial check
     handleResize();
-    
+
     // Add event listener
-    window.addEventListener('resize', handleResize);
-    
+    window.addEventListener("resize", handleResize);
+
     // Cleanup
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   // Toggle drawer function
@@ -129,15 +135,13 @@ const NavBar = ({setIsLoggedIn}) => {
         className={`
           fixed top-0 left-0 h-full bg-white shadow-lg z-50 
           transform transition-transform duration-300 ease-in-out
-          ${isDrawerOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isDrawerOpen ? "translate-x-0" : "-translate-x-full"}
           w-64 lg:translate-x-0
         `}
       >
         {/* Header */}
         <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-slate-900">
-            Menu
-          </h2>
+          <h2 className="text-xl font-bold text-slate-900">Menu</h2>
         </div>
 
         {/* Navigation Links */}
@@ -145,56 +149,55 @@ const NavBar = ({setIsLoggedIn}) => {
           <ul className="space-y-2">
             {navigationItems.map((item) => {
               const IconComponent = item.icon;
-              
-              return (
-                <> 
-                <li key={item.name}>
-                  <NavLink
-                    to={item.path}
-                    onClick={handleMobileNavClick}
-                    className={({ isActive }) =>
-                      `flex items-center px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-gray-50 ${
-                        isActive
-                          ? 'text-shadow-slate-800 bg-gradient-to-r from-slate-300 to-slate-300 border-r-2 border-slate-900'
-                          : 'text-gray-700 hover:text-gray-900'
-                      }`
-                    }
-                  >
-                    <IconComponent className="h-5 w-5 mr-3 flex-shrink-0" />
-                    <span>{item.name}</span>
-                  </NavLink>
-                </li>
 
-                </>
+              return (
+                
+                  <li key={item.name}>
+                    <NavLink
+                      to={item.path}
+                      onClick={handleMobileNavClick}
+                      className={({ isActive }) =>
+                        `flex items-center px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-gray-50 ${
+                          isActive
+                            ? "text-shadow-slate-800 bg-gradient-to-r from-slate-300 to-slate-300 border-r-2 border-slate-900"
+                            : "text-gray-700 hover:text-gray-900"
+                        }`
+                      }
+                    >
+                      <IconComponent className="h-5 w-5 mr-3 flex-shrink-0" />
+                      <span>{item.name}</span>
+                    </NavLink>
+                  </li>
                 
               );
             })}
-            <li>
-                <li key="logout">
-                  <button
-                   
-                    onClick={handleLogout}
-                    className="
-                      flex items-center px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-gray-50" 
-                  >
-                  <LucideDoorOpen/>
-                    <span>Logout</span>
-                  </button>
-                </li>
-            </li>
+            
+              <li key="logout">
+                <button
+                  onClick={handleLogout}
+                  className="
+                      flex items-center px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-gray-50"
+                >
+                  <LucideDoorOpen />
+                  <span>Logout</span>
+                </button>
+              </li>
+            
           </ul>
         </div>
 
         {/* Footer - Optional */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center">
-            © 2025 Mushroom
-          </p>
+          <p className="text-xs text-gray-500 text-center">© 2025 Mushroom</p>
         </div>
       </nav>
 
       {/* Main Content Spacer - Desktop Only */}
-      <div className={`${isDrawerOpen ? 'lg:ml-64' : ''} transition-all duration-300`}>
+      <div
+        className={`${
+          isDrawerOpen ? "lg:ml-64" : ""
+        } transition-all duration-300`}
+      >
         {/* This div ensures content is pushed when drawer is open on desktop */}
       </div>
     </>

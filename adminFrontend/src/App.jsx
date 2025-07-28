@@ -11,15 +11,15 @@ import Home from "./pages/Home";
 import Location from "./pages/Location";
 import AddProduct from "./pages/AddProducts";
 import Orders from "./pages/Orders";
-import ViewProducts from "./pages/viewproduct";
+import ViewProducts from "./pages/ViewProduct";
 import AddShop from "./pages/AddShop";
 import ViewShops from "./pages/ViewShops";
 import Login from "./pages/Login";
 import EditProduct from "./pages/EditProduct";
 import EditShop from "./pages/EditShop";
-import  { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Layout setIsLoggedIn={setIsLoggedIn} />}>
@@ -45,20 +45,20 @@ function App() {
         containerStyle={{}}
         toastOptions={{
           // Define default options
-          className: "",
+          className: "h-20",
           duration: 5000,
           removeDelay: 1000,
           style: {
-            background: "#363636",
-            color: "#fff",
+            background: "#06274D",
+            color: "#ffff",
           },
 
           // Default options for specific types
           success: {
             duration: 3000,
             iconTheme: {
-              primary: "green",
-              secondary: "black",
+              primary: "black",
+              secondary: "white",
             },
           },
         }}

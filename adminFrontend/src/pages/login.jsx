@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { User, Lock, LogIn } from 'lucide-react';
 import axios from "../api/axios.config.js"
+import toast from 'react-hot-toast';
 
 export default function Login({setIsLoggedIn}) {
   const [formData, setFormData] = useState({
@@ -62,6 +63,7 @@ export default function Login({setIsLoggedIn}) {
         console.log(response)
         if(response.data.statusCode==200){
           setIsLoggedIn(true);
+          toast.success("Login Completed")
         }
       }catch(err){
         console.log("there was an error",err);

@@ -9,10 +9,13 @@ import {
   Bars3Icon,
   XMarkIcon,
   HomeModernIcon,
-  PlusIcon
+  PlusIcon,
+  ArrowLeftEndOnRectangleIcon,
+  ArrowPathRoundedSquareIcon
 } from '@heroicons/react/24/outline';
+import { ArrowBigLeftDashIcon, DoorClosed, DoorClosedLockedIcon, DoorOpenIcon, LucideDoorOpen } from 'lucide-react';
 
-const NavBar = () => {
+const NavBar = ({setIsLoggedIn}) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -52,9 +55,13 @@ const NavBar = () => {
       name:"View Shops",
       path:'/viewShops',
       icon:HomeModernIcon
-    }
+    },
+    
    
   ];
+  const handleLogout=()=>{
+    setIsLoggedIn(false);
+  }
 
   // Handle screen size changes
   useEffect(() => {
@@ -140,6 +147,7 @@ const NavBar = () => {
               const IconComponent = item.icon;
               
               return (
+                <> 
                 <li key={item.name}>
                   <NavLink
                     to={item.path}
@@ -156,8 +164,24 @@ const NavBar = () => {
                     <span>{item.name}</span>
                   </NavLink>
                 </li>
+
+                </>
+                
               );
             })}
+            <li>
+                <li key="logout">
+                  <button
+                   
+                    onClick={handleLogout}
+                    className="
+                      flex items-center px-6 py-3 text-sm font-medium transition-colors duration-200 hover:bg-gray-50" 
+                  >
+                  <LucideDoorOpen/>
+                    <span>Logout</span>
+                  </button>
+                </li>
+            </li>
           </ul>
         </div>
 

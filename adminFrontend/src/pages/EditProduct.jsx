@@ -1,6 +1,7 @@
+import { Edit } from "lucide-react";
 import React, { useState, useEffect } from "react";
-
-const ViewProduct = () => {
+import { useParams } from "react-router-dom";
+const EditProduct= () => {
   // State to hold the current product data
   const [product, setProduct] = useState(null);
   // State to manage which field is currently being edited
@@ -11,12 +12,8 @@ const ViewProduct = () => {
   const [selectedImageFile, setSelectedImageFile] = useState(null);
 
   // Mock product data for demonstration
-  useEffect(() => {
-    // In a real application, you would fetch a single product by ID here
-    const fetchProduct = async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setProduct({
+   const productId=useParams();
+    const ProductDetails={
         id: 1,
         name: "Wireless Bluetooth Headphones Pro",
         image:
@@ -27,7 +24,23 @@ const ViewProduct = () => {
         price: 79.99,
         discount: 15,
         deliveryTime: 2,
-      });
+      }
+ 
+     
+      
+     
+      
+  useEffect(() => {
+    // In a real application, you would fetch a single product by ID here
+
+    const fetchProduct = async () => {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log(productId)
+      console.log(ProductDetails.id)
+       if(ProductDetails.id==productId.productId)
+       setProduct(ProductDetails);
+     
     };
     fetchProduct();
   }, []);
@@ -341,4 +354,4 @@ const ViewProduct = () => {
   );
 };
 
-export default ViewProduct;
+export default EditProduct;

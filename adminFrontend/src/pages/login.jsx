@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { User, Lock, LogIn } from 'lucide-react';
 import axios from "../api/axios.config.js"
 
-export default function Login() {
+export default function Login({setIsLoggedIn}) {
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -52,20 +52,25 @@ export default function Login() {
     }
     
     setIsSubmitting(true);
-    const backendCall=async()=>{
+    // const backendCall=async()=>{
 
       const loginPayload={username:formData.username,password:formData.password}
       try{
-        const response=await axios.post('/admin/login',loginPayload)
+        const response=await axios.post('/admin/login',loginPayload,{
+          withCredentials:true
+        })
         console.log(response)
+        if(response.data.statusCode==200){
+          setIsLoggedIn(true);
+        }
       }catch(err){
         console.log("there was an error",err);
       }
 
-    }
+    
 
     
-    // setIsSubmitting(false);
+    setIsSubmitting(false);
     
     // Handle successful login (redirect, etc.)
    
@@ -114,7 +119,7 @@ export default function Login() {
                     type="text"
                     autoComplete='off'
                     name="username"
-                    autocomplete="false"
+                    // autocomplete="false"
                     value={formData.username}
                     onChange={handleInputChange}
                     onFocus={() => setFocusedField('username')}

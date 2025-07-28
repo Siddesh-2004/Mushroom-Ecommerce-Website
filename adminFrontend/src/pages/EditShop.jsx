@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 export default function  ViewProduct()  {
   // State to hold the current product data
@@ -9,14 +10,7 @@ export default function  ViewProduct()  {
   const [editedValues, setEditedValues] = useState({});
   // State to temporarily hold the selected image file for preview
   const [selectedImageFile, setSelectedImageFile] = useState(null);
-
-  // Mock product data for demonstration
-  useEffect(() => {
-    // In a real application, you would fetch a single product by ID here
-    const fetchProduct = async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setProduct({
+  const ShopDetail={
         id: 1,
         name: "Wireless Bluetooth Headphones Pro",
         image:
@@ -27,7 +21,16 @@ export default function  ViewProduct()  {
         price: 79.99,
         discount: 15,
         deliveryTime: 2,
-      });
+      }
+      const shopId=useParams()
+  // Mock product data for demonstration
+  useEffect(() => {
+    // In a real application, you would fetch a single product by ID here
+    const fetchProduct = async () => {
+      // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      if(shopId.shopId=ShopDetail.id)
+      setProduct(ShopDetail);
     };
     fetchProduct();
   }, []);

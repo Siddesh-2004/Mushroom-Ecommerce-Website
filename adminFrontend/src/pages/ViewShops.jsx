@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Search, X } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 export default function ViewShops() {
+  const navigate=useNavigate();
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -83,8 +84,8 @@ export default function ViewShops() {
     return price - (price * discountPercentage) / 100;
   };
 
-  const handleEdit = (productId) => {
-    // Here you would typically navigate to an edit page or open a modal
+  const handleEdit = (shopId) => {
+    navigate(`/viewShops/${shopId}`);
   };
 
   const handleDelete = (productId) => {

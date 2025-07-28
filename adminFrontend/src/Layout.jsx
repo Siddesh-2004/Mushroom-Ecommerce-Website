@@ -3,10 +3,10 @@ import { Outlet } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer"
 
-function Layout() {
+function Layout({setIsLoggedIn}) {
   return (
     <>
-      <NavBar />
+      <NavBar setIsLoggedIn={setIsLoggedIn} />
       <Outlet />
       <Footer/>
 

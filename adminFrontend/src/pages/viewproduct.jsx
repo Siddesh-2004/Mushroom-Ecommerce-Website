@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { Search, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ViewProducts() {
+  const navigate =useNavigate()
   const [products, setProducts] = useState([
     {
       id: 1,
@@ -72,8 +74,8 @@ export default function ViewProducts() {
   };
 
   const handleEdit = (productId) => {
+    navigate(`/viewProducts/${productId}`)
     
-    // Here you would typically navigate to an edit page or open a modal
   };
 
   const handleDelete = (productId) => {

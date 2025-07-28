@@ -9,26 +9,30 @@ import Orders from "./pages/Orders";
 import ViewProducts from "./pages/viewproduct";
 import AddShop from "./pages/AddShop";
 import ViewShops from "./pages/ViewShops";
-import Login from "./pages/login";
-import { useState } from "react";
+import Login from "./pages/Login";
+import EditProduct from "./pages/EditProduct"
+import EditShop from "./pages/EditShop"
 function App() {
-  const [isLoggedIn,setIsLoggedIn]=useState(false);
-const router =createBrowserRouter(
+  const [isLoggedIn,setIsLoggedIn]=useState(true);
+const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<Layout/>}>
+    <Route path="/" element={<Layout setIsLoggedIn={setIsLoggedIn}/>}>
       <Route path="" element={<Home/>}/>
       <Route path="addProduct" element={<AddProduct/>}/>
       <Route path="orders" element={<Orders/>}/>
       <Route path="viewProducts" element={<ViewProducts/>}/>
+      <Route path="viewProducts/:productId" element={<EditProduct/>}/>
       <Route path="locations" element={<Location/>}/>
       <Route path="addShop" element={<AddShop/>}/>
       <Route path="viewShops" element={<ViewShops/>}/>
+      <Route path="viewShops/:shopId" element={<EditShop/>}/>
     </Route>
   )
 )
+
 if(!isLoggedIn)
   return(
-    <Login/>
+    <Login setIsLoggedIn={setIsLoggedIn}/>
   )
 return (
     <>

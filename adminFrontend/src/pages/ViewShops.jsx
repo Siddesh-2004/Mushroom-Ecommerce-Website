@@ -1,82 +1,24 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "../api/axios.config.js"
+
 export default function ViewShops() {
   const navigate=useNavigate();
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Apple iPhone 15 Pro Max",
-      image:
-        "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=300&fit=crop&crop=center",
-      Address:
-        "Latest iPhone with A17 Pro chip, titanium design, and advanced camera system. Features 6.7-inch Super Retina XDR display with ProMotion technology.",
-      quantity: 25,
-      price: 134900,
-      discountPercentage: 8,
-      deliveryTime: 2,
-    },
-    {
-      id: 2,
-      name: "Samsung Galaxy S24 Ultra",
-      image:
-        "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&h=300&fit=crop&crop=center",
-      Address:
-        "Premium Android smartphone with S Pen, 200MP camera, and AI-powered features. Built with titanium frame for durability and premium feel.",
-      quantity: 18,
-      price: 129999,
-      discountPercentage: 12,
-      deliveryTime: 3,
-    },
-    {
-      id: 3,
-      name: "Sony WH-1000XM5 Headphones",
-      image:
-        "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=300&h=300&fit=crop&crop=center",
-      Address:
-        "Industry-leading noise canceling wireless headphones with 30-hour battery life. Premium comfort and exceptional sound quality for audiophiles.",
-      quantity: 42,
-      price: 29990,
-      discountPercentage: 15,
-      deliveryTime: 1,
-    },
-    {
-      id: 4,
-      name: "MacBook Air M3",
-      image:
-        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=300&fit=crop&crop=center",
-      Address:
-        "Ultra-thin and lightweight laptop powered by Apple M3 chip. Features 13.6-inch Liquid Retina display and all-day battery life for productivity.",
-      quantity: 12,
-      price: 114900,
-      discountPercentage: 5,
-      deliveryTime: 4,
-    },
-    {
-      id: 5,
-      name: "Dell XPS 13 Plus",
-      image:
-        "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=300&fit=crop&crop=center",
-      Address:
-        "Premium ultrabook with 12th Gen Intel processors and stunning InfinityEdge display. Perfect blend of performance and portability for professionals.",
-      quantity: 8,
-      price: 149999,
-      discountPercentage: 18,
-      deliveryTime: 5,
-    },
-    {
-      id: 6,
-      name: "iPad Pro 12.9-inch",
-      image:
-        "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&h=300&fit=crop&crop=center",
-      Address:
-        "Most advanced iPad with M2 chip, Liquid Retina XDR display, and Apple Pencil support. Perfect for creative professionals and digital artists.",
-      quantity: 15,
-      price: 112900,
-      discountPercentage: 10,
-      deliveryTime: 3,
-    },
-  ]);
+  const [shops, setShops] = useState([]);
+  useEffect(()=>{
+    const asyncHandler=async()=>{
+      try{
+       const response=await axios.get('/shop/view');
+       setShops(response.data.data);
+      }catch(err){
+        console.log(err)
+      }
+       
+    }
+    asyncHandler();
+   
+  },[])
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -88,13 +30,19 @@ export default function ViewShops() {
     navigate(`/viewShops/${shopId}`);
   };
 
-  const handleDelete = (productId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-    if (confirmed) {
-      setProducts((prev) => prev.filter((product) => product.id !== productId));
+   const handleDelete = async(id) => {
+    try{
+      console.log(id);
+      const response=await axios.delete(`/shop/delete/${id}`)
+      if(response.data.statusCode==200){
+        toast.success(response.data.message)
+      }
+    }catch(err){
+      console.log(err)
     }
+   
+      setShops(prev => prev.filter(product => product._id !== id));
+    
   };
 
   const formatPrice = (price) => {
@@ -109,11 +57,11 @@ export default function ViewShops() {
     setSearchTerm("");
   };
 
-  // Filter products based on search term
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.Address.toLowerCase().includes(searchTerm.toLowerCase())
+  // Filter shops based on search term
+  const filteredShops = shops.filter(
+    (shop) =>
+      shop.shopName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.shopAddress.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -125,7 +73,7 @@ export default function ViewShops() {
             Shop Details
           </h1>
           <p className="text-slate-300 text-center mt-2 text-sm sm:text-base">
-            Manage and view all available products ({products.length} items)
+            Manage and view all available shops ({shops.length} items)
           </p>
         </div>
       </div>
@@ -155,14 +103,14 @@ export default function ViewShops() {
           </div>
           {searchTerm && (
             <div className="mt-2 text-xs sm:text-sm text-slate-600">
-              {filteredProducts.length === 0 ? (
+              {filteredShops.length === 0 ? (
                 <span className="text-red-600">
-                  No products found matching "{searchTerm}"
+                  No shops found matching "{searchTerm}"
                 </span>
               ) : (
                 <span>
-                  Found {filteredProducts.length} product
-                  {filteredProducts.length !== 1 ? "s" : ""} matching "
+                  Found {filteredShops.length} shop
+                  {filteredShops.length !== 1 ? "s" : ""} matching "
                   {searchTerm}"
                 </span>
               )}
@@ -171,20 +119,20 @@ export default function ViewShops() {
         </div>
       </div>
 
-      {/* Products Section */}
+      {/* Shops Section */}
       <div className="max-w-4xl mx-auto px-3 sm:px-4 pb-6 sm:pb-8">
-        {filteredProducts.length === 0 ? (
+        {filteredShops.length === 0 ? (
           <div className="text-center py-12 sm:py-16">
             <div className="text-4xl sm:text-6xl mb-3 sm:mb-4">
               {searchTerm ? "🔍" : "📦"}
             </div>
             <h3 className="text-lg sm:text-xl font-semibold text-slate-700 mb-2">
-              {searchTerm ? "No products found" : "No products available"}
+              {searchTerm ? "No shops found" : "No shops available"}
             </h3>
             <p className="text-slate-500 text-sm sm:text-base">
               {searchTerm
-                ? `No products match your search for ${searchTerm}. Try a different search term.`
-                : "Start by adding your first product to the inventory"}
+                ? `No shops match your search for ${searchTerm}. Try a different search term.`
+                : "Start by adding your first shop to the inventory"}
             </p>
             {searchTerm && (
               <button
@@ -197,16 +145,16 @@ export default function ViewShops() {
           </div>
         ) : (
           <div className="space-y-4 sm:space-y-6 xl_custom:w-3/5 xl2_custom:w-full   m-auto ">
-            {filteredProducts.map((product) => (
+            {filteredShops.map((shop) => (
               <div>
                 <div
-                  key={product.id}
+                  key={shop._id}
                   className="bg-white shadow-lg rounded-lg border border-slate-200 overflow-hidden "
                 >
                   {/* Card Header */}
                   <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-3 sm:px-6 sm:py-4">
                     <h2 className="text-lg sm:text-xl font-semibold">
-                      {product.name}
+                      {shop.shopName}
                     </h2>
                   </div>
 
@@ -216,8 +164,8 @@ export default function ViewShops() {
                       {/* Left Side - Product Image */}
                       <div className="flex-shrink-0 w-48 sm:w-56 lg:w-64 m-auto">
                         <img
-                          src={product.image}
-                          alt={product.name}
+                          src={shop.shopPicture}
+                          alt={shop.shopName}
                           className="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-lg shadow-md"
                           onError={(e) => {
                             e.target.src =
@@ -228,54 +176,57 @@ export default function ViewShops() {
 
                       {/* Right Side - Product Details (Vertical List) */}
                       <div className="flex-1 space-y-2.5 sm:space-y-3 font-sans">
-                        <div>
-                          <h3 className="text-xs sm:text-sm font-bold text-slate-900 mb-1.5 sm:mb-2">
-                            Address:
-                          </h3>
-                          <p className="text-slate-700 leading-relaxed text-sm sm:text-base">
-                            {product.Address}
-                          </p>
-                        </div>
+                       
 
                         <div>
                           <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">
-                            Owner Name:
+                          Owner Name:
                           </h3>
                           <p className="text-base sm:text-lg font-medium text-slate-800">
-                            {product.quantity} units
+                            {shop.shopOwnerName} 
+                          </p>
+                        </div>
+                         <div>
+                          <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">
+                            Phone Number:
+                          </h3>
+                          <p className="text-base sm:text-lg font-medium ">
+                            {shop.shopPhoneNumber}
                           </p>
                         </div>
 
+<div>
+                          <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">
+                            Address:
+                          </h3>
+                          <p className="text-slate-700 leading-relaxed text-sm sm:text-base">
+                            {shop.shopAddress}
+                          </p>
+                        </div>
                         <div>
                           <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">
                             Address Link:
                           </h3>
                           <p className="text-base sm:text-lg font-medium text-slate-800">
-                            {formatPrice(product.price)}
+                            {shop.shopAddressLink}
                           </p>
                         </div>
 
-                        <div>
-                          <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">
-                            Phone Number:
-                          </h3>
-                          <p className="text-base sm:text-lg font-medium ">
-                            {product.discountPercentage}
-                          </p>
-                        </div>
+                       
+                         
                       </div>
                     </div>
 
                     {/* Bottom - Action Buttons */}
                     <div className="flex justify-center gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200">
                       <button
-                        onClick={() => handleEdit(product.id)}
+                        onClick={() => handleEdit(shop.id)}
                         className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-2 sm:px-6 rounded-lg font-medium hover:from-slate-700 hover:to-slate-800 transform hover:scale-105 transition-all duration-200 shadow-lg text-sm sm:text-base"
                       >
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(product.id)}
+                        onClick={() => handleDelete(shop._id)}
                         className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-2 sm:px-6 rounded-lg font-medium hover:from-slate-700 hover:to-slate-800 transform hover:scale-105 transition-all duration-200 shadow-lg text-sm sm:text-base"
                       >
                         Delete
@@ -290,7 +241,7 @@ export default function ViewShops() {
         )}
 
         {/* Summary Statistics */}
-        {filteredProducts.length > 0 && (
+        {filteredShops.length > 0 && (
           <div className="mt-6 sm:mt-8 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-lg p-4 sm:p-6">
             <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-center">
               {searchTerm ? "Search Results Summary" : "Inventory Summary"}
@@ -298,15 +249,15 @@ export default function ViewShops() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4 text-center">
               <div>
                 <div className="text-xl sm:text-2xl font-bold">
-                  {filteredProducts.length}
+                  {filteredShops.length}
                 </div>
                 <div className="text-slate-300 text-xs sm:text-sm">
-                  {searchTerm ? "Matching Products" : "Total Products"}
+                  {searchTerm ? "Matching Shops" : "Total Shops"}
                 </div>
               </div>
               <div>
                 <div className="text-xl sm:text-2xl font-bold">
-                  {filteredProducts.reduce((sum, p) => sum + p.quantity, 0)}
+                  {filteredShops.reduce((sum, p) => sum + p.quantity, 0)}
                 </div>
                 <div className="text-slate-300 text-xs sm:text-sm">
                   Total Units
@@ -316,7 +267,7 @@ export default function ViewShops() {
                 <div className="text-xl sm:text-2xl font-bold">
                   {formatPrice(
                     Math.min(
-                      ...filteredProducts.map((p) =>
+                      ...filteredShops.map((p) =>
                         calculateDiscountedPrice(p.price, p.discountPercentage)
                       )
                     )
@@ -330,7 +281,7 @@ export default function ViewShops() {
                 <div className="text-xl sm:text-2xl font-bold">
                   {formatPrice(
                     Math.max(
-                      ...filteredProducts.map((p) =>
+                      ...filteredShops.map((p) =>
                         calculateDiscountedPrice(p.price, p.discountPercentage)
                       )
                     )

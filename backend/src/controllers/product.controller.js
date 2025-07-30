@@ -3,13 +3,9 @@ import asyncHandler from '../utils/asynchandler.js';
 import ApiResponse from '../utils/apiResponse.js';
 import { ApiError } from '../utils/apiErrors.js';
 import { uploadOnCloudinary ,deleteFromCloudinary} from '../services/cloundinary.service.js';
+import mongoose from 'mongoose';
 const addProduct = asyncHandler(async (req, res) => {
-    //get the product data from the request formdata
-    //check if the product data is present and valid
-    //if not throw an error
-    //if the product data is valid, create a new product
-    //save the product to the database
-    //return the product data in the response with success message
+   console.log("hii")
     let { name, availableQty, price, description, discountPercentage , deliveryTimeInDays} = req.body;
     availableQty = parseInt(availableQty, 10);
     price = parseFloat(price);  
@@ -17,8 +13,8 @@ const addProduct = asyncHandler(async (req, res) => {
     deliveryTimeInDays = parseInt(deliveryTimeInDays, 10);
 
     if (!name || !availableQty || !price || !discountPercentage|| !deliveryTimeInDays) {
-
-        throw new ApiError(400, 'All fields are required');
+        console.log(name,availableQty,price,discountPercentage,deliveryTimeInDays);
+        throw new ApiError(409, 'All fields are required');
     }
     if( typeof availableQty !== 'number' || availableQty < 0) {
         console.log('Invalid quantity:', typeof availableQty);
@@ -72,7 +68,8 @@ const addProduct = asyncHandler(async (req, res) => {
 });
 
 const deleteProduct = asyncHandler(async (req, res) => {
-    const productId = req.params.id;
+    let  productId = req.params.id;
+    productId=new mongoose.Types.ObjectId(productId);
     if (!productId) {
         throw new ApiError(400, 'Product ID is required');
     }
@@ -171,6 +168,7 @@ const updateProduct = asyncHandler(async (req, res) => {
 });
 
 const viewAllProduct = asyncHandler(async (req, res) => {
+    console.log("hiii")
     const products = await productModel.find({});
     if (!products || products.length === 0) {
         throw new ApiError(404, 'No products found or all products have been deleted');

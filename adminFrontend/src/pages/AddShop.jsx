@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Upload, X, Check, Package } from "lucide-react";
+import axios from "../api/axios.config.js"
 
 export default function AddShop() {
   const [formData, setFormData] = useState({
     photo: null,
     name: "",
     address: "",
-    quantity: "",
-    price: "",
-    discount: "",
-    deliveryTime: "",
+    phoneNumber: "",
+    addressLink: "",
+    ownerName: "",
   });
 
   const [photoPreview, setPhotoPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+  
   const [focusedField, setFocusedField] = useState("");
 
   const handleInputChange = (e) => {
@@ -68,47 +68,31 @@ export default function AddShop() {
     const newErrors = {};
 
     if (!formData.photo) {
-      newErrors.photo = "Product photo is required";
+      newErrors.photo = "Shop photo is required";
     }
 
     if (!formData.name.trim()) {
-      newErrors.name = "Product name is required";
+      newErrors.name = "Shop name is required";
+    }
+
+    if (!formData.ownerName.trim()) {
+      newErrors.ownerName = "Owner name is required";
     }
 
     if (!formData.address.trim()) {
-      newErrors.address = "Product address is required";
+      newErrors.address = "Shop address is required";
     }
 
-    if (!formData.quantity) {
-      newErrors.quantity = "Quantity is required";
-    } else if (parseInt(formData.quantity) < 0) {
-      newErrors.quantity = "Quantity must be a positive number";
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phoneNumber.replace(/\D/g, ''))) {
+      newErrors.phoneNumber = "Please enter a valid 10-digit phone number";
     }
 
-    if (!formData.price) {
-      newErrors.price = "Price is required";
-    } else if (parseFloat(formData.price) <= 0) {
-      newErrors.price = "Price must be greater than 0";
-    }
-
-    if (
-      formData.discount &&
-      (parseFloat(formData.discount) < 0 || parseFloat(formData.discount) > 100)
-    ) {
-      newErrors.discount = "Discount must be between 0 and 100";
-    }
-
-    if (!formData.deliveryTime) {
-      newErrors.deliveryTime = "Delivery time is required";
-    } else if (
-      parseInt(formData.deliveryTime) < 1 ||
-      parseInt(formData.deliveryTime) > 365
-    ) {
-      newErrors.deliveryTime = "Delivery time must be between 1 and 365 days";
-    }
-
-    if (!formData.discount) {
-      formData.discount = "0";
+    if (!formData.addressLink.trim()) {
+      newErrors.addressLink = "Address link is required";
+    } else if (!/^https?:\/\/.+/.test(formData.addressLink)) {
+      newErrors.addressLink = "Please enter a valid URL";
     }
 
     setErrors(newErrors);
@@ -123,34 +107,52 @@ export default function AddShop() {
     }
 
     setIsSubmitting(true);
+    try {
+      // Create FormData object for file upload
+      const formDataToSend = new FormData();
+      
+      // Append all fields to FormData with correct field names
+      formDataToSend.append('shopName', formData.name);
+      formDataToSend.append('shopPhoneNumber', formData.phoneNumber);
+      formDataToSend.append('shopOwnerName', formData.ownerName);
+      formDataToSend.append('shopAddress', formData.address);
+      formDataToSend.append('shopAddressLink', formData.addressLink);
+      
+      // Append the file
+      if (formData.photo) {
+        formDataToSend.append('picture', formData.photo);
+      }
 
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Note: You'll need to import axios or use fetch
+      const response = await axios.post("/shop/add", formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-    setIsSubmitting(false);
-    setSubmitSuccess(true);
-
-    setTimeout(() => {
+      console.log(response);
+      
+    
+      
+      
       setFormData({
         photo: null,
         name: "",
         address: "",
-        quantity: "",
-        price: "",
-        discount: "",
-        deliveryTime: "",
+        phoneNumber: "",
+        addressLink: "",
+        ownerName: "",
       });
       setPhotoPreview(null);
-      setSubmitSuccess(false);
-    }, 2000);
-  };
-
-  const calculateDiscountedPrice = () => {
-    if (formData.price && formData.discount) {
-      const price = parseFloat(formData.price);
-      const discount = parseFloat(formData.discount);
-      return (price - (price * discount) / 100).toFixed(2);
+      
+    
+      
+    } catch (err) {
+      console.error('Upload error:', err);
+      alert('Error adding shop. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
-    return null;
   };
 
   return (
@@ -165,10 +167,10 @@ export default function AddShop() {
                 <div className="p-2 sm:p-2.5 lg:p-3 bg-white/10 rounded-lg lg:rounded-xl backdrop-blur-sm border border-white/20">
                   <Package className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
                 </div>
-                Add New Shops
+                Add New Shop
               </h1>
               <p className="text-slate-300 mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg">
-                Add Shop details in this form
+                Add shop details in this form
               </p>
             </div>
           </div>
@@ -185,7 +187,7 @@ export default function AddShop() {
                 <div className="group border-2 border-dashed border-gray-300 rounded-lg sm:rounded-xl p-6 sm:p-8 lg:p-10 text-center hover:border-slate-400 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer">
                   <Upload className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-gray-400 mx-auto mb-3 sm:mb-4 group-hover:text-slate-600 group-hover:scale-110 transition-all duration-300" />
                   <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base lg:text-lg">
-                    Drop your image here or browse
+                    Drop your shop image here or browse
                   </p>
                   <input
                     type="file"
@@ -206,7 +208,7 @@ export default function AddShop() {
                 <div className="relative inline-block group">
                   <img
                     src={photoPreview}
-                    alt="Product preview"
+                    alt="Shop preview"
                     className="w-32 h-32 sm:w-36 sm:h-36 lg:w-40 lg:h-40 object-cover rounded-lg sm:rounded-xl border-2 border-gray-200 shadow-lg group-hover:shadow-xl transition-all duration-300"
                   />
                   <button
@@ -225,41 +227,44 @@ export default function AddShop() {
                 </p>
               )}
             </div>
+
+            {/* Owner Name */}
             <div className="space-y-2 sm:space-y-3">
               <label className="block text-xs sm:text-sm font-semibold text-gray-800">
-                Owner Name*
+                Owner Name *
               </label>
               <div className="relative">
                 <input
                   type="text"
-                  name="name"
-                  value={formData.name}
+                  name="ownerName"
+                  value={formData.ownerName}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField("name")}
+                  onFocus={() => setFocusedField("ownerName")}
                   onBlur={() => setFocusedField("")}
-                  placeholder="Enter product name"
+                  placeholder="Enter owner name"
                   className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                    errors.name
+                    errors.ownerName
                       ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                      : focusedField === "name"
+                      : focusedField === "ownerName"
                       ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
                       : "border-gray-300 hover:border-gray-400"
                   }`}
                 />
-                {focusedField === "name" && (
+                {focusedField === "ownerName" && (
                   <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                 )}
               </div>
-              {errors.name && (
+              {errors.ownerName && (
                 <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
-                  {errors.name}
+                  {errors.ownerName}
                 </p>
               )}
             </div>
-            {/* Product Name */}
+
+            {/* Shop Name */}
             <div className="space-y-2 sm:space-y-3">
               <label className="block text-xs sm:text-sm font-semibold text-gray-800">
-                Shop Name*
+                Shop Name *
               </label>
               <div className="relative">
                 <input
@@ -269,7 +274,7 @@ export default function AddShop() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField("name")}
                   onBlur={() => setFocusedField("")}
-                  placeholder="Enter product name"
+                  placeholder="Enter shop name"
                   className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
                     errors.name
                       ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
@@ -289,10 +294,10 @@ export default function AddShop() {
               )}
             </div>
 
-            {/* address */}
+            {/* Shop Address */}
             <div className="space-y-2 sm:space-y-3">
               <label className="block text-xs sm:text-sm font-semibold text-gray-800">
-                Shop Address*
+                Shop Address *
               </label>
               <div className="relative">
                 <textarea
@@ -301,7 +306,7 @@ export default function AddShop() {
                   onChange={handleInputChange}
                   onFocus={() => setFocusedField("address")}
                   onBlur={() => setFocusedField("")}
-                  placeholder="Describe the product features and benefits"
+                  placeholder="Enter complete shop address"
                   rows="3"
                   className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 resize-none font-medium text-sm sm:text-base ${
                     errors.address
@@ -322,107 +327,96 @@ export default function AddShop() {
               )}
             </div>
 
-            {/* Quantity and Price Grid - responsive grid */}
+            {/* Phone Number and Address Link */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-              {/* Quantity */}
+              {/* Phone Number */}
               <div className="space-y-2 sm:space-y-3">
                 <label className="block text-xs sm:text-sm font-semibold text-gray-800">
                   Phone Number *
                 </label>
                 <div className="relative">
                   <input
-                    type="number"
-                    name="quantity"
-                    value={formData.quantity}
+                    type="tel"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField("quantity")}
+                    onFocus={() => setFocusedField("phoneNumber")}
                     onBlur={() => setFocusedField("")}
-                    placeholder="0"
-                    min="0"
+                    placeholder="Enter phone number"
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                      errors.quantity
+                      errors.phoneNumber
                         ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                        : focusedField === "quantity"
+                        : focusedField === "phoneNumber"
                         ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
                         : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === "quantity" && (
+                  {focusedField === "phoneNumber" && (
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
-                {errors.quantity && (
+                {errors.phoneNumber && (
                   <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
-                    {errors.quantity}
+                    {errors.phoneNumber}
                   </p>
                 )}
               </div>
 
-              {/* Price */}
+              {/* Address Link */}
               <div className="space-y-2 sm:space-y-3">
                 <label className="block text-xs sm:text-sm font-semibold text-gray-800">
-                  Address Link
+                  Address Link *
                 </label>
                 <div className="relative">
                   <input
-                    type="text"
-                    name="price"
-                    value={formData.price}
+                    type="url"
+                    name="addressLink"
+                    value={formData.addressLink}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField("price")}
+                    onFocus={() => setFocusedField("addressLink")}
                     onBlur={() => setFocusedField("")}
-                    placeholder="Enter google map link"
-                   
+                    placeholder="Enter Google Maps link"
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                      errors.price
+                      errors.addressLink
                         ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
-                        : focusedField === "price"
+                        : focusedField === "addressLink"
                         ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
                         : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === "price" && (
+                  {focusedField === "addressLink" && (
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
-                {errors.price && (
+                {errors.addressLink && (
                   <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
-                    {errors.price}
+                    {errors.addressLink}
                   </p>
                 )}
               </div>
             </div>
 
-        
-
             {/* Submit Button - responsive sizing */}
             <div className="pt-4 sm:pt-6">
               <button
-                type="button"
+                type="submit"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
                 className={`w-full flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 shadow-lg sm:shadow-xl hover:shadow-2xl text-sm sm:text-base lg:text-lg ${
                   isSubmitting
                     ? "bg-gray-400 cursor-not-allowed"
-                    : submitSuccess
-                    ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
                     : "bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black"
                 }`}
               >
                 {isSubmitting ? (
                   <>
                     <div className="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Adding Product...</span>
-                  </>
-                ) : submitSuccess ? (
-                  <>
-                    <Check className="w-5 h-5 sm:w-6 sm:h-6 animate-bounce" />
-                    <span>Product Added Successfully!</span>
+                    <span>Adding Shop...</span>
                   </>
                 ) : (
                   <>
                     <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
-                    <span>Add Product</span>
+                    <span>Add Shop</span>
                   </>
                 )}
               </button>

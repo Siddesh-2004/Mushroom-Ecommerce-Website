@@ -1,71 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
+import axios from '../api/axios.config';
+import toast from "react-hot-toast"
 export default function ViewProducts() {
   const navigate =useNavigate()
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Apple iPhone 15 Pro Max",
-      image: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=300&fit=crop&crop=center",
-      description: "Latest iPhone with A17 Pro chip, titanium design, and advanced camera system. Features 6.7-inch Super Retina XDR display with ProMotion technology.",
-      quantity: 25,
-      price: 134900,
-      discountPercentage: 8,
-      deliveryTime: 2
-    },
-    {
-      id: 2,
-      name: "Samsung Galaxy S24 Ultra",
-      image: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=300&h=300&fit=crop&crop=center",
-      description: "Premium Android smartphone with S Pen, 200MP camera, and AI-powered features. Built with titanium frame for durability and premium feel.",
-      quantity: 18,
-      price: 129999,
-      discountPercentage: 12,
-      deliveryTime: 3
-    },
-    {
-      id: 3,
-      name: "Sony WH-1000XM5 Headphones",
-      image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=300&h=300&fit=crop&crop=center",
-      description: "Industry-leading noise canceling wireless headphones with 30-hour battery life. Premium comfort and exceptional sound quality for audiophiles.",
-      quantity: 42,
-      price: 29990,
-      discountPercentage: 15,
-      deliveryTime: 1
-    },
-    {
-      id: 4,
-      name: "MacBook Air M3",
-      image: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=300&fit=crop&crop=center",
-      description: "Ultra-thin and lightweight laptop powered by Apple M3 chip. Features 13.6-inch Liquid Retina display and all-day battery life for productivity.",
-      quantity: 12,
-      price: 114900,
-      discountPercentage: 5,
-      deliveryTime: 4
-    },
-    {
-      id: 5,
-      name: "Dell XPS 13 Plus",
-      image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&h=300&fit=crop&crop=center",
-      description: "Premium ultrabook with 12th Gen Intel processors and stunning InfinityEdge display. Perfect blend of performance and portability for professionals.",
-      quantity: 8,
-      price: 149999,
-      discountPercentage: 18,
-      deliveryTime: 5
-    },
-    {
-      id: 6,
-      name: "iPad Pro 12.9-inch",
-      image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=300&h=300&fit=crop&crop=center",
-      description: "Most advanced iPad with M2 chip, Liquid Retina XDR display, and Apple Pencil support. Perfect for creative professionals and digital artists.",
-      quantity: 15,
-      price: 112900,
-      discountPercentage: 10,
-      deliveryTime: 3
+  const [products, setProducts] = useState([]);
+  useEffect(()=>{
+    const asyncHandler=async()=>{
+      try{
+        const response = await axios.get('/product/view');
+        setProducts(response.data.data);
+
+      }catch(err){
+        console.log(err);
+      }
     }
-  ]);
+    asyncHandler()
+  },[])
 
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -78,11 +30,19 @@ export default function ViewProducts() {
     
   };
 
-  const handleDelete = (productId) => {
-    const confirmed = window.confirm('Are you sure you want to delete this product?');
-    if (confirmed) {
-      setProducts(prev => prev.filter(product => product.id !== productId));
+  const handleDelete = async(id) => {
+    try{
+      console.log(id);
+      const response=await axios.delete(`/product/delete/${id}`)
+      if(response.data.statusCode==200){
+        toast.success(response.data.message)
+      }
+    }catch(err){
+      console.log(err)
     }
+   
+      setProducts(prev => prev.filter(product => product._id !== id));
+    
   };
 
   const formatPrice = (price) => {
@@ -182,7 +142,7 @@ export default function ViewProducts() {
           
             {filteredProducts.map((product) => (
               <div>
-              <div key={product.id} className="bg-white shadow-lg rounded-lg border border-slate-200 overflow-hidden ">
+              <div key={product._id} className="bg-white shadow-lg rounded-lg border border-slate-200 overflow-hidden ">
                 {/* Card Header */}
                 <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-3 sm:px-6 sm:py-4">
                   <h2 className="text-lg sm:text-xl font-semibold">{product.name}</h2>
@@ -194,7 +154,7 @@ export default function ViewProducts() {
                     {/* Left Side - Product Image */}
                     <div className="flex-shrink-0 w-48 sm:w-56 lg:w-64 m-auto">
                       <img
-                        src={product.image}
+                        src={product.picture}
                         alt={product.name}
                         className="w-full h-48 sm:h-56 lg:h-64 object-cover rounded-lg shadow-md"
                         onError={(e) => {
@@ -212,7 +172,7 @@ export default function ViewProducts() {
 
                       <div>
                         <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">Available Quantity:</h3>
-                        <p className="text-base sm:text-lg font-medium text-slate-800">{product.quantity} units</p>
+                        <p className="text-base sm:text-lg font-medium text-slate-800">{product.availableQty} units</p>
                       </div>
 
                       <div>
@@ -234,7 +194,7 @@ export default function ViewProducts() {
 
                       <div>
                         <h3 className="text-xs sm:text-sm font-semibold text-slate-600 mb-1">Delivery Time (in days):</h3>
-                        <p className="text-base sm:text-lg font-medium text-slate-800">{product.deliveryTime} days</p>
+                        <p className="text-base sm:text-lg font-medium text-slate-800">{product.deliveryTimeInDays} days</p>
                       </div>
                     </div>
                   </div>
@@ -242,13 +202,13 @@ export default function ViewProducts() {
                   {/* Bottom - Action Buttons */}
                   <div className="flex justify-center gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200">
                     <button
-                      onClick={() => handleEdit(product.id)}
+                      onClick={() => handleEdit(product._id)}
                       className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-2 sm:px-6 rounded-lg font-medium hover:from-slate-700 hover:to-slate-800 transform hover:scale-105 transition-all duration-200 shadow-lg text-sm sm:text-base"
                     >
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(product.id)}
+                      onClick={() => handleDelete(product._id)}
                       className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-2 sm:px-6 rounded-lg font-medium hover:from-slate-700 hover:to-slate-800 transform hover:scale-105 transition-all duration-200 shadow-lg text-sm sm:text-base"
                     >
                       Delete

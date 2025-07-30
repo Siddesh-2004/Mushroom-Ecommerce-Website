@@ -1,34 +1,36 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Upload, X, Check, Package } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Plus, Upload, X, Check, Package } from "lucide-react";
+import axios from "../api/axios.config";
+import toast from "react-hot-toast";
 
 export default function AddProduct() {
   const [formData, setFormData] = useState({
     photo: null,
-    name: '',
-    description: '',
-    quantity: '',
-    price: '',
-    discount: '',
-    deliveryTime: ''
+    name: "",
+    description: "",
+    quantity: "",
+    price: "",
+    discount: "",
+    deliveryTime: "",
   });
-  
+
   const [photoPreview, setPhotoPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [focusedField, setFocusedField] = useState('');
+  const [focusedField, setFocusedField] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ''
+        [name]: "",
       }));
     }
   };
@@ -36,113 +38,146 @@ export default function AddProduct() {
   const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        photo: file
+        photo: file,
       }));
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setPhotoPreview(e.target.result);
       };
       reader.readAsDataURL(file);
-      
+
       if (errors.photo) {
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          photo: ''
+          photo: "",
         }));
       }
     }
   };
 
   const removePhoto = () => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      photo: null
+      photo: null,
     }));
     setPhotoPreview(null);
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.photo) {
-      newErrors.photo = 'Product photo is required';
+      newErrors.photo = "Product photo is required";
     }
-    
+
     if (!formData.name.trim()) {
-      newErrors.name = 'Product name is required';
+      newErrors.name = "Product name is required";
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Product description is required';
+      newErrors.description = "Product description is required";
     }
-    
+
     if (!formData.quantity) {
-      newErrors.quantity = 'Quantity is required';
+      newErrors.quantity = "Quantity is required";
     } else if (parseInt(formData.quantity) < 0) {
-      newErrors.quantity = 'Quantity must be a positive number';
+      newErrors.quantity = "Quantity must be a positive number";
     }
-    
+
     if (!formData.price) {
-      newErrors.price = 'Price is required';
+      newErrors.price = "Price is required";
     } else if (parseFloat(formData.price) <= 0) {
-      newErrors.price = 'Price must be greater than 0';
+      newErrors.price = "Price must be greater than 0";
     }
-    
-    if (formData.discount && (parseFloat(formData.discount) < 0 || parseFloat(formData.discount) > 100)) {
-      newErrors.discount = 'Discount must be between 0 and 100';
+
+    if (
+      formData.discount &&
+      (parseFloat(formData.discount) < 0 || parseFloat(formData.discount) > 100)
+    ) {
+      newErrors.discount = "Discount must be between 0 and 100";
     }
-    
+
     if (!formData.deliveryTime) {
-      newErrors.deliveryTime = 'Delivery time is required';
-    } else if (parseInt(formData.deliveryTime) < 1 || parseInt(formData.deliveryTime) > 365) {
-      newErrors.deliveryTime = 'Delivery time must be between 1 and 365 days';
+      newErrors.deliveryTime = "Delivery time is required";
+    } else if (
+      parseInt(formData.deliveryTime) < 1 ||
+      parseInt(formData.deliveryTime) > 365
+    ) {
+      newErrors.deliveryTime = "Delivery time must be between 1 and 365 days";
     }
-    
+
     if (!formData.discount) {
-      formData.discount = '0';
+      formData.discount = "0";
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  if (!validateForm()) {
+    return;
+  }
+
+  setIsSubmitting(true);
+  try {
+    // Create FormData object for file upload
+    const formDataToSend = new FormData();
     
-    if (!validateForm()) {
-      return;
+    // Append all fields to FormData
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('availableQty', formData.quantity);
+    formDataToSend.append('price', formData.price);
+    formDataToSend.append('discountPercentage', formData.discount || '0');
+    formDataToSend.append('description', formData.description);
+    formDataToSend.append('deliveryTimeInDays', formData.deliveryTime);
+    
+    // Append the file
+    if (formData.photo) {
+      formDataToSend.append('picture', formData.photo);
     }
+
+    const response = await axios.post("/product/add", formDataToSend, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    toast.success(response.data.message)
+
     
-    setIsSubmitting(true);
     
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Reset form on success
+    setFormData({
+      photo: null,
+      name: "",
+      description: "",
+      quantity: "",
+      price: "",
+      discount: "",
+      deliveryTime: "",
+    });
+    setPhotoPreview(null);
     
     setIsSubmitting(false);
-    setSubmitSuccess(true);
     
-    setTimeout(() => {
-      setFormData({
-        photo: null,
-        name: '',
-        description: '',
-        quantity: '',
-        price: '',
-        discount: '',
-        deliveryTime: ''
-      });
-      setPhotoPreview(null);
-      setSubmitSuccess(false);
-    }, 2000);
-  };
+    
+  } catch (err) {
+    toast.error(err.response.data.message)
+    setIsSubmitting(false);
+    // Handle error - maybe show error message to user
+  }
+};
 
   const calculateDiscountedPrice = () => {
     if (formData.price && formData.discount) {
       const price = parseFloat(formData.price);
       const discount = parseFloat(formData.discount);
-      return (price - (price * discount / 100)).toFixed(2);
+      return (price - (price * discount) / 100).toFixed(2);
     }
     return null;
   };
@@ -161,7 +196,9 @@ export default function AddProduct() {
                 </div>
                 Add New Product
               </h1>
-              <p className="text-slate-300 mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg">Create a new product listing</p>
+              <p className="text-slate-300 mt-1 sm:mt-2 text-sm sm:text-base lg:text-lg">
+                Create a new product listing
+              </p>
             </div>
           </div>
 
@@ -172,11 +209,13 @@ export default function AddProduct() {
               <label className="block text-xs sm:text-sm font-semibold text-gray-800">
                 Product Photo *
               </label>
-              
+
               {!photoPreview ? (
                 <div className="group border-2 border-dashed border-gray-300 rounded-lg sm:rounded-xl p-6 sm:p-8 lg:p-10 text-center hover:border-slate-400 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer">
                   <Upload className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 text-gray-400 mx-auto mb-3 sm:mb-4 group-hover:text-slate-600 group-hover:scale-110 transition-all duration-300" />
-                  <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base lg:text-lg">Drop your image here or browse</p>
+                  <p className="text-gray-600 mb-3 sm:mb-4 text-sm sm:text-base lg:text-lg">
+                    Drop your image here or browse
+                  </p>
                   <input
                     type="file"
                     accept="image/*"
@@ -208,9 +247,11 @@ export default function AddProduct() {
                   </button>
                 </div>
               )}
-              
+
               {errors.photo && (
-                <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.photo}</p>
+                <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                  {errors.photo}
+                </p>
               )}
             </div>
 
@@ -225,23 +266,25 @@ export default function AddProduct() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField('')}
+                  onFocus={() => setFocusedField("name")}
+                  onBlur={() => setFocusedField("")}
                   placeholder="Enter product name"
                   className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                    errors.name 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                      : focusedField === 'name'
-                      ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                      : 'border-gray-300 hover:border-gray-400'
+                    errors.name
+                      ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : focusedField === "name"
+                      ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                      : "border-gray-300 hover:border-gray-400"
                   }`}
                 />
-                {focusedField === 'name' && (
+                {focusedField === "name" && (
                   <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                 )}
               </div>
               {errors.name && (
-                <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.name}</p>
+                <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                  {errors.name}
+                </p>
               )}
             </div>
 
@@ -255,24 +298,26 @@ export default function AddProduct() {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  onFocus={() => setFocusedField('description')}
-                  onBlur={() => setFocusedField('')}
+                  onFocus={() => setFocusedField("description")}
+                  onBlur={() => setFocusedField("")}
                   placeholder="Describe the product features and benefits"
                   rows="3"
                   className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 resize-none font-medium text-sm sm:text-base ${
-                    errors.description 
-                      ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                      : focusedField === 'description'
-                      ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                      : 'border-gray-300 hover:border-gray-400'
+                    errors.description
+                      ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                      : focusedField === "description"
+                      ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                      : "border-gray-300 hover:border-gray-400"
                   }`}
                 />
-                {focusedField === 'description' && (
+                {focusedField === "description" && (
                   <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                 )}
               </div>
               {errors.description && (
-                <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.description}</p>
+                <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                  {errors.description}
+                </p>
               )}
             </div>
 
@@ -289,24 +334,26 @@ export default function AddProduct() {
                     name="quantity"
                     value={formData.quantity}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField('quantity')}
-                    onBlur={() => setFocusedField('')}
+                    onFocus={() => setFocusedField("quantity")}
+                    onBlur={() => setFocusedField("")}
                     placeholder="0"
                     min="0"
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                      errors.quantity 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                        : focusedField === 'quantity'
-                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                        : 'border-gray-300 hover:border-gray-400'
+                      errors.quantity
+                        ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : focusedField === "quantity"
+                        ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === 'quantity' && (
+                  {focusedField === "quantity" && (
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
                 {errors.quantity && (
-                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.quantity}</p>
+                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                    {errors.quantity}
+                  </p>
                 )}
               </div>
 
@@ -321,25 +368,27 @@ export default function AddProduct() {
                     name="price"
                     value={formData.price}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField('price')}
-                    onBlur={() => setFocusedField('')}
+                    onFocus={() => setFocusedField("price")}
+                    onBlur={() => setFocusedField("")}
                     placeholder="0.00"
                     min="0"
                     step="0.01"
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                      errors.price 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                        : focusedField === 'price'
-                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                        : 'border-gray-300 hover:border-gray-400'
+                      errors.price
+                        ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : focusedField === "price"
+                        ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === 'price' && (
+                  {focusedField === "price" && (
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
                 {errors.price && (
-                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.price}</p>
+                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                    {errors.price}
+                  </p>
                 )}
               </div>
             </div>
@@ -357,26 +406,28 @@ export default function AddProduct() {
                     name="discount"
                     value={formData.discount}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField('discount')}
-                    onBlur={() => setFocusedField('')}
+                    onFocus={() => setFocusedField("discount")}
+                    onBlur={() => setFocusedField("")}
                     placeholder="0"
                     min="0"
                     max="100"
                     step="0.01"
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
-                      errors.discount 
-                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100' 
-                        : focusedField === 'discount'
-                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                        : 'border-gray-300 hover:border-gray-400'
+                      errors.discount
+                        ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : focusedField === "discount"
+                        ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === 'discount' && (
+                  {focusedField === "discount" && (
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
                 {errors.discount && (
-                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.discount}</p>
+                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                    {errors.discount}
+                  </p>
                 )}
               </div>
 
@@ -395,33 +446,39 @@ export default function AddProduct() {
                     name="deliveryTime"
                     value={formData.deliveryTime}
                     onChange={handleInputChange}
-                    onFocus={() => setFocusedField('deliveryTime')}
-                    onBlur={() => setFocusedField('')}
+                    onFocus={() => setFocusedField("deliveryTime")}
+                    onBlur={() => setFocusedField("")}
                     placeholder="0"
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border-2 rounded-lg sm:rounded-xl focus:outline-none transition-all duration-300 font-medium text-sm sm:text-base ${
                       errors.deliveryTime
-                        ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100'
-                        : focusedField === 'deliveryTime'
-                        ? 'border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg'
-                        : 'border-gray-300 hover:border-gray-400'
+                        ? "border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-100"
+                        : focusedField === "deliveryTime"
+                        ? "border-slate-400 focus:border-slate-600 focus:ring-4 focus:ring-slate-100 shadow-lg"
+                        : "border-gray-300 hover:border-gray-400"
                     }`}
                   />
-                  {focusedField === 'deliveryTime' && (
+                  {focusedField === "deliveryTime" && (
                     <div className="absolute inset-0 rounded-lg sm:rounded-xl bg-gradient-to-r from-slate-100/20 to-transparent pointer-events-none"></div>
                   )}
                 </div>
                 {errors.deliveryTime && (
-                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">{errors.deliveryTime}</p>
+                  <p className="text-red-500 text-xs sm:text-sm font-medium animate-pulse">
+                    {errors.deliveryTime}
+                  </p>
                 )}
               </div>
             </div>
-              
+
             {/* Price Preview - responsive text and spacing */}
             {calculateDiscountedPrice() && (
               <div className="mt-2 sm:mt-3 p-3 sm:p-4 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-lg sm:rounded-xl shadow-inner">
                 <p className="text-xs sm:text-sm text-slate-800 font-medium">
-                  <span className="text-base sm:text-lg font-bold text-slate-900">Final Price: ₹{calculateDiscountedPrice()}</span>
-                  <span className="text-gray-500 ml-2 sm:ml-3 line-through text-sm sm:text-base">₹{formData.price}</span>
+                  <span className="text-base sm:text-lg font-bold text-slate-900">
+                    Final Price: ₹{calculateDiscountedPrice()}
+                  </span>
+                  <span className="text-gray-500 ml-2 sm:ml-3 line-through text-sm sm:text-base">
+                    ₹{formData.price}
+                  </span>
                   <span className="ml-1 sm:ml-2 px-1.5 py-0.5 sm:px-2 sm:py-1 bg-green-100 text-green-800 rounded-md sm:rounded-lg text-xs font-semibold">
                     {formData.discount}% OFF
                   </span>
@@ -437,10 +494,10 @@ export default function AddProduct() {
                 disabled={isSubmitting}
                 className={`w-full flex items-center justify-center gap-2 sm:gap-3 px-6 py-3 sm:px-8 sm:py-4 rounded-lg sm:rounded-xl text-white font-semibold transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 shadow-lg sm:shadow-xl hover:shadow-2xl text-sm sm:text-base lg:text-lg ${
                   isSubmitting
-                    ? 'bg-gray-400 cursor-not-allowed'
+                    ? "bg-gray-400 cursor-not-allowed"
                     : submitSuccess
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700'
-                    : 'bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black'
+                    ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+                    : "bg-gradient-to-r from-slate-800 to-slate-900 hover:from-slate-900 hover:to-black"
                 }`}
               >
                 {isSubmitting ? (

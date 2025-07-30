@@ -239,7 +239,7 @@ export default function ViewProducts() {
               </div>
               <div>
                 <div className="text-xl sm:text-2xl font-bold">
-                  {filteredProducts.reduce((sum, p) => sum + p.quantity, 0)}
+                  {filteredProducts.reduce((sum, p) => sum + p.availableQty, 0)}
                 </div>
                 <div className="text-slate-300 text-xs sm:text-sm">Total Units</div>
               </div>

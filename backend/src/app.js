@@ -29,6 +29,7 @@ import locationRoutes from "./routes/locaton.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 import shopRoutes from "./routes/shop.routes.js"
 import dashBoardRoutes from "./routes/dashBoard.routes.js"
+import bannerRoutes from "./routes/banner.routes.js"
 // Use routes
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/product", productRoutes);
@@ -36,3 +37,4 @@ app.use("/api/v1/location", locationRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use('/api/v1/shop',shopRoutes);
 app.use('/api/v1/dashBoard',dashBoardRoutes);
+app.use('/api/v1/banner',bannerRoutes);

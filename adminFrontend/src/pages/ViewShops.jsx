@@ -255,42 +255,9 @@ export default function ViewShops() {
                   {searchTerm ? "Matching Shops" : "Total Shops"}
                 </div>
               </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-bold">
-                  {filteredShops.reduce((sum, p) => sum + p.quantity, 0)}
-                </div>
-                <div className="text-slate-300 text-xs sm:text-sm">
-                  Total Units
-                </div>
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-bold">
-                  {formatPrice(
-                    Math.min(
-                      ...filteredShops.map((p) =>
-                        calculateDiscountedPrice(p.price, p.discountPercentage)
-                      )
-                    )
-                  )}
-                </div>
-                <div className="text-slate-300 text-xs sm:text-sm">
-                  Lowest Price
-                </div>
-              </div>
-              <div>
-                <div className="text-xl sm:text-2xl font-bold">
-                  {formatPrice(
-                    Math.max(
-                      ...filteredShops.map((p) =>
-                        calculateDiscountedPrice(p.price, p.discountPercentage)
-                      )
-                    )
-                  )}
-                </div>
-                <div className="text-slate-300 text-xs sm:text-sm">
-                  Highest Price
-                </div>
-              </div>
+             
+            
+             
             </div>
           </div>
         )}

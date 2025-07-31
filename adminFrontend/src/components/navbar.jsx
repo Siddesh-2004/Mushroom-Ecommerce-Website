@@ -12,7 +12,7 @@ import {
   HomeModernIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
-import { LucideDoorOpen } from "lucide-react";
+import { LucideDoorOpen, PictureInPicture2, PictureInPicture2Icon, PictureInPictureIcon } from "lucide-react";
 import axios from "../api/axios.config.js";
 const NavBar = ({ setIsLoggedIn }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -55,6 +55,11 @@ const NavBar = ({ setIsLoggedIn }) => {
       path: "/viewShops",
       icon: HomeModernIcon,
     },
+    {
+      name:'Add Banners',
+      path:"/addBanners",
+      icon:PictureInPicture2Icon
+    }
   ];
   const handleLogout = async () => {
     try {

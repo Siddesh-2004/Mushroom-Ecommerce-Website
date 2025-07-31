@@ -53,7 +53,7 @@ const forceRefresh = () => {
 
     // Validation
     if (!formData.pincode || !formData.cityName || !formData.deliveryCharge) {
-      alert("Please fill in all fields");
+      toast.error("Please fill in all fields");
       return;
     }
     try{
@@ -64,27 +64,14 @@ const forceRefresh = () => {
       })
       toast.success(response.data.message)
     }catch(err){
-      console.log(err.response.data.message)
+      toast.error(err.response.data.message)
     }
   
     forceRefresh();
 
-    // Add new location
-    const newLocation = {
-      id: Date.now(),
-      pincode: formData.pincode,
-      cityName: formData.cityName,
-      deliveryCharge: parseFloat(formData.deliveryCharge),
-    };
+    
 
-    setLocations((prev) => [...prev, newLocation]);
-
-    // Reset form
-    setFormData({
-      pincode: "",
-      cityName: "",
-      deliveryCharge: "",
-    });
+    
   };
 
   const handleDelete = async(id) => {

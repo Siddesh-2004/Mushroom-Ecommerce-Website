@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 import EditProduct from "./pages/EditProduct";
 import EditShop from "./pages/EditShop";
 import { Toaster } from "react-hot-toast";
+import AddBanners from "./pages/AddBanners";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = createBrowserRouter(
@@ -32,6 +33,7 @@ function App() {
         <Route path="addShop" element={<AddShop />} />
         <Route path="viewShops" element={<ViewShops />} />
         <Route path="viewShops/:shopId" element={<EditShop />} />
+        <Route path="addBanners" element={<AddBanners/>}/>
       </Route>
     )
   );

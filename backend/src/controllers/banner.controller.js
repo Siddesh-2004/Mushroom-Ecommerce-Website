@@ -51,4 +51,13 @@ const deleteBanner=asyncHandler(async(req,res)=>{
     }
     res.status(200).json(new ApiResponse(deleteBanner,"Deleted Successfully",200));
 })
-export {addBanner,deleteBanner};
+
+
+const viewBanners=asyncHandler(async(req,res)=>{
+    const banners= await bannerModel.find({});
+    if(!banners||banners.length==0){
+        throw new ApiError(404,"There are no banner available")
+    }
+    res.status(200).json(new ApiResponse(banners,"Banners are retrieved successfully"));
+})
+export {addBanner,deleteBanner,viewBanners};

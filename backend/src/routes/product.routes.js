@@ -1,5 +1,5 @@
 import Router from 'express';
-import { addProduct ,deleteProduct,updateProduct,viewAllProduct} from '../controllers/product.controller.js';
+import { addProduct ,deleteProduct,updateProduct,updateProductImage,viewAllProduct,viewSingleProduct} from '../controllers/product.controller.js';
 import { upload } from '../middlewares/multer.js';
 
 
@@ -11,8 +11,12 @@ router.route('/add')
 router.route('/delete/:id')
     .delete(deleteProduct);
 router.route('/update/:id')
-    .put(upload.single('picture'), updateProduct);
+    .patch(upload.single('picture'), updateProduct);
 router.route('/view')
     .get(viewAllProduct);
+router.route('/viewProduct/:id')
+    .get(viewSingleProduct);
+router.route('/image/update/:id')
+    .patch(upload.single('picture'),updateProductImage);
 
 export default router;

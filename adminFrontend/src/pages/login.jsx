@@ -16,7 +16,7 @@ export default function Login({ setIsLoggedIn }) {
           }
         );
         setIsLoggedIn(true);
-        toast.success("AutoLogin Successfull");
+      
       } catch (err) {
         console.log(err)
       }

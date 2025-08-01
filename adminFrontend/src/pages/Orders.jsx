@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
 import {
   Package,
   Calendar,
@@ -17,37 +17,36 @@ import { useEffect } from "react";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-  
+
   useEffect(() => {
     const asyncHandler = async () => {
       try {
         const response = await axios.get("/order/view");
         setOrders(response.data.data);
-        toast.success(response.data.message)
-        
       } catch (err) {
-        toast.error(err.response.data.message)
+        console.log(err.response.message);
       }
-     
     };
 
-     asyncHandler();
+    asyncHandler();
   }, []);
 
   const handleMarkDelivered = async (orderId) => {
     try {
       // Update backend
-      const response=await axios.patch(`/order/update/orderStatus`, {orderId, orderStatus: "delivered" });
-      
+      const response = await axios.patch(`/order/update/orderStatus`, {
+        orderId,
+        orderStatus: "delivered",
+      });
+
       // Update local state
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, orderStatus: "delivered" } : order
         )
-       
       );
-      
-       toast.success(response.data.message);
+
+      toast.success(response.data.message);
     } catch (error) {
       console.error("Error updating order:", error);
       toast.error("Failed to update order status");
@@ -68,8 +67,12 @@ const Orders = () => {
   };
 
   // Filter orders based on status
-  const activeOrders = orders.filter(order => order.orderStatus === "not delivered");
-  const deliveredOrders = orders.filter(order => order.orderStatus === "delivered");
+  const activeOrders = orders.filter(
+    (order) => order.orderStatus === "not delivered"
+  );
+  const deliveredOrders = orders.filter(
+    (order) => order.orderStatus === "delivered"
+  );
 
   const OrderCard = ({ order, isActive = true }) => (
     <div className="w-full mb-4">
@@ -108,9 +111,7 @@ const Orders = () => {
             <div className="flex items-start gap-2">
               <User className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
               <div className="min-w-0 flex-1">
-                <p className="text-slate-600 text-xs font-medium">
-                  Customer
-                </p>
+                <p className="text-slate-600 text-xs font-medium">Customer</p>
                 <p className="text-slate-800 font-semibold text-sm break-words">
                   {order.fullName}
                 </p>
@@ -121,9 +122,7 @@ const Orders = () => {
             <div className="flex items-start gap-2">
               <Package className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
               <div className="min-w-0 flex-1">
-                <p className="text-slate-600 text-xs font-medium">
-                  Product
-                </p>
+                <p className="text-slate-600 text-xs font-medium">Product</p>
                 <p className="text-slate-800 font-semibold text-sm break-words">
                   {order?.productDetails?.name}
                 </p>
@@ -147,9 +146,7 @@ const Orders = () => {
             <div className="flex items-start gap-2">
               <Hash className="w-4 h-4 text-slate-600 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-slate-600 text-xs font-medium">
-                  Quantity
-                </p>
+                <p className="text-slate-600 text-xs font-medium">Quantity</p>
                 <p className="text-slate-800 font-semibold text-sm">
                   {order.orderQty} units
                 </p>
@@ -234,9 +231,7 @@ const Orders = () => {
             Track and manage customer orders
           </p>
         </div>
-        <div className="w-full h-4">
-
-        </div>
+        <div className="w-full h-4"></div>
 
         <div className="max-w-4xl mx-auto">
           {/* Active Orders Section */}
@@ -246,18 +241,23 @@ const Orders = () => {
                 <Clock className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">Active Orders</h2>
-                <p className="text-slate-600 text-sm">Orders pending delivery ({activeOrders.length})</p>
+                <h2 className="text-2xl font-bold text-slate-800">
+                  Active Orders
+                </h2>
+                <p className="text-slate-600 text-sm">
+                  Orders pending delivery ({activeOrders.length})
+                </p>
               </div>
             </div>
-             <div className="w-full h-4">
-
-        </div>
+            <div className="w-full h-4"></div>
 
             {activeOrders.length > 0 ? (
               <div className="space-y-4">
                 {activeOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} isActive={true} />
+                  <>
+                    <OrderCard key={order._id} order={order} isActive={true} />
+                    <div className="w-full h-4"></div>
+                  </>
                 ))}
               </div>
             ) : (
@@ -272,9 +272,7 @@ const Orders = () => {
               </div>
             )}
           </div>
-           <div className="w-full h-4">
-
-        </div>
+          <div className="w-full h-4"></div>
 
           {/* Delivered Orders Section */}
           <div className="mb-8">
@@ -282,20 +280,24 @@ const Orders = () => {
               <div className="bg-gradient-to-r from-slate-800 to-slate-900 p-3 rounded-lg ">
                 <CheckCircle className="w-6 h-6 text-white" />
               </div>
-              <div >
-                <h2 className="text-2xl font-bold text-slate-800">Delivered Orders</h2>
-                <p className="text-slate-600 text-sm">Successfully completed orders ({deliveredOrders.length})</p>
+              <div>
+                <h2 className="text-2xl font-bold text-slate-800">
+                  Delivered Orders
+                </h2>
+                <p className="text-slate-600 text-sm">
+                  Successfully completed orders ({deliveredOrders.length})
+                </p>
               </div>
-              
             </div>
-             <div className="w-full h-4">
-
-        </div>
+            <div className="w-full h-4"></div>
 
             {deliveredOrders.length > 0 ? (
               <div className="space-y-4">
                 {deliveredOrders.map((order) => (
-                  <OrderCard key={order._id} order={order} isActive={false} />
+                  <>
+                    <OrderCard key={order._id} order={order} isActive={false} />
+                    <div className="w-full h-4"></div>
+                  </>
                 ))}
               </div>
             ) : (
@@ -305,18 +307,15 @@ const Orders = () => {
                   No delivered orders
                 </h3>
                 <p className="text-gray-500 text-sm">
-                  Delivered orders will appear here once you mark them as complete.
+                  Delivered orders will appear here once you mark them as
+                  complete.
                 </p>
               </div>
             )}
           </div>
-           <div className="w-full h-4">
-
+          <div className="w-full h-4"></div>
         </div>
-        </div>
- <div className="w-full h-4">
-
-        </div>
+        <div className="w-full h-4"></div>
         {/* Order Summary Stats */}
         <div className="max-w-4xl mx-auto mt-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

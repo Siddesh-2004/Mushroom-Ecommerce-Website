@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between py-4 px-4 sm:px-6 lg:px-8 text-gray-600 text-sm">
         {/* Left side */}
         <p className="order-2 md:order-1 mt-2 md:mt-0">
-          © {year} MyEcom Admin. All rights reserved.
+          © {year} Prakriti Admin. All rights reserved.
         </p>
 
         {/* Right side links */}

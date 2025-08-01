@@ -193,7 +193,7 @@ const NavBar = ({ setIsLoggedIn }) => {
 
         {/* Footer - Optional */}
         <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center">© 2025 Mushroom</p>
+          <p className="text-xs text-gray-500 text-center">© 2025 Prakriti Mushrooms</p>
         </div>
       </nav>
 

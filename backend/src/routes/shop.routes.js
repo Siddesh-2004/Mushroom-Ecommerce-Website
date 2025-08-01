@@ -1,6 +1,6 @@
 import Router from "express"
 import {upload} from "../middlewares/multer.js"
-import { addShop,deleteShop, updateShop, viewAllShops } from "../controllers/shop.controller.js";
+import { addShop,deleteShop, updateShop, updateShopImage, viewAllShops, viewSingleShop } from "../controllers/shop.controller.js";
 const router=Router();
 
 router.route('/add')
@@ -8,8 +8,12 @@ router.route('/add')
 router.route('/delete/:id')
     .delete(deleteShop);
 router.route('/update/:id')
-    .put(upload.single('picture'),updateShop);
+    .patch(upload.single('picture'),updateShop);
 router.route('/view')
     .get(viewAllShops);
+router.route('/viewProduct/:id')
+    .get(viewSingleShop);
+router.route('/update/image/:id')
+    .post(upload.single('picture'),updateShopImage);
 
 export default router;

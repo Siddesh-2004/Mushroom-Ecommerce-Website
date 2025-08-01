@@ -220,7 +220,7 @@ export default function ViewShops() {
                     {/* Bottom - Action Buttons */}
                     <div className="flex justify-center gap-3 sm:gap-4 mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-200">
                       <button
-                        onClick={() => handleEdit(shop.id)}
+                        onClick={() => handleEdit(shop._id)}
                         className="bg-gradient-to-r from-slate-800 to-slate-900 text-white px-4 py-2 sm:px-6 rounded-lg font-medium hover:from-slate-700 hover:to-slate-800 transform hover:scale-105 transition-all duration-200 shadow-lg text-sm sm:text-base"
                       >
                         Edit

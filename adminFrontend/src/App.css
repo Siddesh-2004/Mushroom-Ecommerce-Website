@@ -1,6 +1,18 @@
 @import "tailwindcss";
 
-@theme {
+@theme{
   --breakpoint-xl_custom: 1024px;
   --breakpoint-xl2_custom:1402px;
+}
+
+* {
+  user-select: none;
+  cursor: default;
+}
+
+
+
+/* Only show text cursor on actual input fields */
+input, textarea, [contenteditable="true"] {
+  cursor: text;
 }

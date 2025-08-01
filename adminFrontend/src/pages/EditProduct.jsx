@@ -132,6 +132,7 @@ const EditProduct = () => {
       const response = await axios.patch(`/product/update/${product._id}`, editedValues, {
         headers: { 'Content-Type': 'application/json' },
       });
+      
 
       if (response.status === 200) {
         // Update the local product state with new values for display
@@ -144,7 +145,7 @@ const EditProduct = () => {
         setEditingField(null);
         setEditedValues({});
         setSelectedImageFile(null); // Ensure image file state is cleared
-
+        toast.success("Product updated succesfully")
         
       }
     } catch (error) {

@@ -19,6 +19,7 @@ import EditProduct from "./pages/EditProduct";
 import EditShop from "./pages/EditShop";
 import { Toaster } from "react-hot-toast";
 import AddBanners from "./pages/AddBanners";
+import ScrollToTop from "./components/ScrollToTop";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = createBrowserRouter(

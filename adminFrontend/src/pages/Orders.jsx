@@ -19,17 +19,24 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const asyncHandler = async () => {
+    const fetchOrders = async () => {
       try {
         const response = await axios.get("/order/view");
         setOrders(response.data.data);
       } catch (err) {
-        console.log(err.response.message);
+        console.log(err.response?.data?.message || err.message);
       }
     };
 
-    asyncHandler();
-  }, []);
+    // Fetch immediately on mount
+    fetchOrders();
+
+    // Set up interval for periodic fetching
+    const interval = setInterval(fetchOrders, 108000); // 108 seconds
+
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, []); // Empty dependency - runs once on mount
 
   const handleMarkDelivered = async (orderId) => {
     try {

@@ -75,7 +75,7 @@ export default function AddBanners() {
     }
 
     setIsUploading(true);
-    
+    const loader=toast.loading("Adding Banners")
     try {
       // Create FormData properly
       const formData = new FormData();
@@ -86,7 +86,7 @@ export default function AddBanners() {
           'Content-Type': 'multipart/form-data',
         },
       });
-      
+   toast.dismiss(loader)
    toast.success("Banner Added Successfully")
       
       // Reset form
@@ -104,7 +104,8 @@ export default function AddBanners() {
       console.log('Banner uploaded successfully');
       
     } catch (error) {
-      setError('Failed to upload banner. Please try again.');
+      toast.dismiss(loader)
+      toast.error('Failed to upload banner. Please try again.');
       console.error('Upload error:', error);
     } finally {
       setIsUploading(false);
@@ -113,11 +114,13 @@ export default function AddBanners() {
 
   // Handle banner deletion
   const handleDelete = async (bannerId) => {
+    const loader=toast.loading("Deleting Banner")
     try {
         console.log(bannerId)
       // Make API call to delete banner
     //   toast.loading("Deleting the banner")
       const response=await axios.delete(`/banner/delete/${bannerId}`);
+      toast.dismiss(loader)
       toast.success(response.data.message);
       
       // Refresh banners from server
@@ -126,6 +129,7 @@ setBanners(prev => prev.filter(banner => banner._id !== bannerId));
       refreshTriggerFunction();
       
     } catch (error) {
+      toast.dismiss(loader)
       console.error('Delete error:', error);
       setError('Failed to delete banner. Please try again.');
     }

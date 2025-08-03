@@ -56,14 +56,18 @@ const forceRefresh = () => {
       toast.error("Please fill in all fields");
       return;
     }
+    const loader=toast.loading("Adding Location")
     try{
+      
       const response=await axios.post('/location/add',{
         pincode: Number(formData.pincode),
          city: formData.cityName ,
          deliveryCharge:formData.deliveryCharge
       })
+      toast.dismiss(loader)
       toast.success(response.data.message)
     }catch(err){
+      toast.dismiss(loader)
       toast.error(err.response.data.message)
     }
   
@@ -75,15 +79,17 @@ const forceRefresh = () => {
   };
 
   const handleDelete = async(id) => {
-     setLocations(prev => prev.filter(product => product._id !== id));
+     
     try{
       console.log(id);
       const response=await axios.delete(`/location/delete/${id}`)
       if(response.data.statusCode==200){
         toast.success(response.data.message)
       }
+      setLocations(prev => prev.filter(product => product._id !== id));
     }catch(err){
       console.log(err)
+      toast.error(err.response?.data?.message)
     }
    
      

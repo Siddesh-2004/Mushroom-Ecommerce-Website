@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Upload, X, Check, Package } from "lucide-react";
 import axios from "../api/axios.config.js"
+import toast from "react-hot-toast";
 
 export default function AddShop() {
   const [formData, setFormData] = useState({
@@ -124,13 +125,16 @@ export default function AddShop() {
       }
 
       // Note: You'll need to import axios or use fetch
+      const loader=toast.loading("Adding Product")
       const response = await axios.post("/shop/add", formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      toast.dismiss(loader )
+      toast.success(response.data.message)
 
-      console.log(response);
+      console.log(response.data.data.message);
       
     
       
@@ -148,8 +152,9 @@ export default function AddShop() {
     
       
     } catch (err) {
+       toast.dismiss(loader )
       console.error('Upload error:', err);
-      alert('Error adding shop. Please try again.');
+     toast.error(err.response?.data?.message)
     } finally {
       setIsSubmitting(false);
     }

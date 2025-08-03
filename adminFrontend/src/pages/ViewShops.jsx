@@ -2,6 +2,7 @@ import React, { useState,useEffect } from "react";
 import { Search, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "../api/axios.config.js"
+import toast from "react-hot-toast";
 
 export default function ViewShops() {
   const navigate=useNavigate();
@@ -31,13 +32,16 @@ export default function ViewShops() {
   };
 
    const handleDelete = async(id) => {
+    const loader=toast.loading("Deleting Shop");
     try{
       console.log(id);
       const response=await axios.delete(`/shop/delete/${id}`)
       if(response.data.statusCode==200){
+        toast.dismiss(loader)
         toast.success(response.data.message)
       }
     }catch(err){
+      toast.dismiss(loader);
       console.log(err)
     }
    

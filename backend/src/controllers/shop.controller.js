@@ -141,7 +141,7 @@ const deleteShop = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(deletedShop, "The shop details are deleted"));
+    .json(new ApiResponse(deletedShop, "The shop details are deleted",200));
 });
 
 const updateShop = asyncHandler(async (req, res) => {

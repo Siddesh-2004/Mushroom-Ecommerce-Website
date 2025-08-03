@@ -125,6 +125,7 @@ export default function AddProduct() {
   }
 
   setIsSubmitting(true);
+  const loader=toast.loading("Adding Product");
   try {
     // Create FormData object for file upload
     const formDataToSend = new FormData();
@@ -146,7 +147,9 @@ export default function AddProduct() {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+
     });
+    toast.dismiss(loader)
     toast.success(response.data.message)
 
     
@@ -167,7 +170,8 @@ export default function AddProduct() {
     
     
   } catch (err) {
-    toast.error(err.response.data.message)
+    toast.dismiss(loader)
+    toast.error(err.response?.data?.message)
     setIsSubmitting(false);
     // Handle error - maybe show error message to user
   }

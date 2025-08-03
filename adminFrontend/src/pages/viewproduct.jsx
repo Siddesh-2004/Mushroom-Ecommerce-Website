@@ -31,13 +31,16 @@ export default function ViewProducts() {
   };
 
   const handleDelete = async(id) => {
+    const loader=toast.loading("Deleting Product")
     try{
       console.log(id);
       const response=await axios.delete(`/product/delete/${id}`)
       if(response.data.statusCode==200){
+        toast.dismiss(loader)
         toast.success(response.data.message)
       }
     }catch(err){
+      toast.dismiss(loader)
       console.log(err)
     }
    

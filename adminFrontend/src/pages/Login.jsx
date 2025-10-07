@@ -15,6 +15,7 @@ export default function Login({ setIsLoggedIn }) {
             withCredentials: true,
           }
         );
+        console.log(response);
         setIsLoggedIn(true);
       
       } catch (err) {

@@ -15,6 +15,7 @@ export default function Login({ setIsLoggedIn }) {
             withCredentials: true,
           }
         );
+        console.log(response);
         setIsLoggedIn(true);
       
       } catch (err) {
@@ -22,7 +23,7 @@ export default function Login({ setIsLoggedIn }) {
       }
     };
     verify();
-  }, []);
+  },);
 
   const [formData, setFormData] = useState({
     username: "",

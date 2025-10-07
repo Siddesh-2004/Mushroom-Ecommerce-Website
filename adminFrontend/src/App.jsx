@@ -11,7 +11,7 @@ import Home from "./pages/Home";
 import Location from "./pages/Location";
 import AddProduct from "./pages/AddProducts";
 import Orders from "./pages/Orders";
-import ViewProducts from "./pages/ViewProduct";
+import ViewProducts from "./pages/Viewproduct";
 import AddShop from "./pages/AddShop";
 import ViewShops from "./pages/ViewShops";
 import Login from "./pages/Login";

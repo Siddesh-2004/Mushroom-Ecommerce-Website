@@ -3,7 +3,7 @@ import { Search, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios.config';
 import toast from "react-hot-toast"
-export default function ViewProducts() {
+export default function ViewProduct() {
   const navigate =useNavigate()
   const [products, setProducts] = useState([]);
   useEffect(()=>{

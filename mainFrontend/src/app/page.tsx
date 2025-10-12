@@ -1,7 +1,14 @@
-import Image from "next/image";
+import Heading from "@/components/Heading";
+import CardCarousel from "@/components/BannerCarousel";
+import ViewProducts from "@/components/ViewProducts";
 
 export default function Home() {
   return (
-   <h1 className="bg-red-300 text-4xl">Siddesh</h1>
+    <div className="bg-white flex flex-col justify-center items-center m-2">
+      <Heading fontsize1="text-7xl" />
+      <CardCarousel />
+      <ViewProducts />
+
+    </div>
   );
 }
